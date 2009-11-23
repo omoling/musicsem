@@ -33,7 +33,11 @@ public class MainServlet extends HttpServlet {
 		response.setContentType("text/xml;charset=utf-8");
 		
 		//Forward XML result to RdfProducer (XSLT)
-		String rdf_data = RdfProducer.XmlToRdf(result, "/Users/psyle/Documents/workspace/iwa_alpha/WebContent/test.xsl");
+		//TODO: relative path??
+		//String xsl_source = getServletContext().getResource("/WEB-INF/test.xsl").toString();
+		String xsl_source = "/Users/omoling/Documents/workspace/iwa_alpha/WebContent/test.xsl";
+		
+		String rdf_data = RdfProducer.XmlToRdf(result, xsl_source);
 		//Import RDF/XML to model
 		JenaFrame.import_rdf(rdf_data);
 		//Show model
