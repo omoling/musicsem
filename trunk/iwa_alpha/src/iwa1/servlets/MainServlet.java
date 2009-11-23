@@ -40,6 +40,7 @@ public class MainServlet extends HttpServlet {
 		String rdf_data = RdfProducer.XmlToRdf(result, xsl_source);
 		//Import RDF/XML to model
 		JenaFrame.import_rdf(rdf_data);
+		
 		//Show model
 		String rdf_model=JenaFrame.show_model();
 		out.print(rdf_model);
