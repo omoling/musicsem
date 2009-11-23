@@ -35,7 +35,7 @@ public class MainServlet extends HttpServlet {
 		//Forward XML result to RdfProducer (XSLT)
 		//TODO: relative path??
 		//String xsl_source = getServletContext().getResource("/WEB-INF/test.xsl").toString();
-		String xsl_source = "/Users/psyle/Documents/workspace/iwa_alpha/WebContent/test.xsl";
+		String xsl_source = "/Users/omoling/Documents/workspace/iwa_alpha/WebContent/test.xsl";
 		
 		String rdf_data = RdfProducer.XmlToRdf(result, xsl_source);
 		//Import RDF/XML to model
