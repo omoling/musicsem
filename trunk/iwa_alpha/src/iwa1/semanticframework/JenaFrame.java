@@ -28,7 +28,7 @@ public class JenaFrame {
 
 	public static void init(String rdf_data)
 	{
-
+		
 		
 	}
 	
