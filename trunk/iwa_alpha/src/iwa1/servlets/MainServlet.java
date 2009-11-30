@@ -27,25 +27,48 @@ public class MainServlet extends HttpServlet {
 		// 
 		
 		PrintWriter out = response.getWriter();
-		String artists=request.getParameter("search");
-		//Make request to datasource
-		String result= DataLastFm.lastfm("artist.getevents",artists);
-		response.setContentType("text/xml;charset=utf-8");
+		String keyword = request.getParameter("search");
+
+		//TODO: session management
+		 //Initialize Model
+		 JenaFrame.init();
 		
-		//Forward XML result to RdfProducer (XSLT)
-		//TODO: relative path??
+	 	//Make requests to datasources
+ 		//Query DBpedia
+ 		//String dbpedia_res = DataDBpedia.query_dbpedia(keyword);
+		 DataDBpedia.query_dbpedia(keyword);
+		 
+ 		//Last.fm
+ 		String lastfm_res= DataLastFm.lastfm("artist.getevents",keyword);
+ 		//YouTube
+ 		 String youtube_res= DataYouTube.youtube(keyword);
+		
+ 		//Flicr
+ 		String flickr_res = DataFlickr.searchFlickr(keyword);
+		
+		
+		
+ 		//Forward XML result to RdfProducer (XSLT)
+ 		//TODO: relative path??
 		//String xsl_source = getServletContext().getResource("/WEB-INF/test.xsl").toString();
 		String xsl_source = "/Users/"+System.getProperty("user.name")+"/Documents/workspace/iwa_alpha/WebContent/test.xsl";
 		
-		String rdf_data = RdfProducer.XmlToRdf(result, xsl_source);
+		String rdf_data = RdfProducer.XmlToRdf(lastfm_res, xsl_source);
 		//Import RDF/XML to model
 		JenaFrame.import_rdf(rdf_data);
 		
 		//Show model
 		String rdf_model=JenaFrame.show_model();
+		
+		 //Query local model
+		 String local_res = JenaFrame.query_model();
+		 
+		//Response
+		response.setContentType("text/xml;charset=utf-8");
 		out.print(rdf_model);
 		
 		
+	  
 	}
 
 	/**
