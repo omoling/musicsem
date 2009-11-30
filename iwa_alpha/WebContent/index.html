@@ -4,13 +4,30 @@
 
 <head>
 <link rel="stylesheet" href="style.css" type="text/css" /> 
-<script type="text/javascript" src="script.js"></script>
+<script type="text/javascript" src="script.js">
+	function keyNotEmpty()
+{
+	
+    if ( document.getElementById("search").value.length==0  )
+    {
+		
+        alert("No keyword was entered!")
+        return false;
+    }
+	 else
+    {
+		
+        return true;
+	
+    }
+}
+</script>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 <title>MusicSem</title>
 </head>
 
 <body>
-<form action="MainServlet" method="post" >
+<form action="MainServlet"  name="keyform"  onsubmit= "return keyNotEmpty()" method="post">
 		Artist:
 		<input type="text" id="search" name="search" /><br />
 		<input type="submit" value="Search" /><br />
