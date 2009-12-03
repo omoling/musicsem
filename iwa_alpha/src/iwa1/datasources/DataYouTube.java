@@ -75,8 +75,9 @@ public class DataYouTube {
 		try
 		{
 			//set method URL
-			URL url = new URL("http://gdata.youtube.com/feeds/api/videos??q=" +
-					URLEncoder.encode(keyword, "UTF-8") +"&key=AI39si7EoXyvmGkxvEVXmxhzGld68uvsX8N4zZC7v1k7m6lNCo7ZsAesh58KhF_KhOq92jnTZcul4ct_Fj7hBA0XL4qnSes70Q");
+			URL url = new URL("http://gdata.youtube.com/feeds/api/videos?q=" +
+					URLEncoder.encode(keyword, "UTF-8") +"&key=AI39si7EoXyvmGkxvEVXmxhzGld68uvsX8N4zZC7v1k7m6lNCo7ZsAesh58KhF_KhOq92jnTZcul4ct_Fj7hBA0XL4qnSes70Q&client=musisem" +
+							"&orderby=relevance&max-results=20");
 			URLConnection urlc = url.openConnection();
 			urlc.setDoOutput(true);
 			urlc.setAllowUserInteraction(false);

@@ -21,7 +21,6 @@
     xmlns:m="http://www.kanzaki.com/ns/music#" 
     xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
     xmlns:vCard = "http://www.w3.org/2001/vcard-rdf/3.0#"
-
  >	
  <xsl:apply-templates/>
  </rdf:RDF>
