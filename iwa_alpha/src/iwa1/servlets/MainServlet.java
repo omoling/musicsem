@@ -36,33 +36,50 @@ public class MainServlet extends HttpServlet {
 	 	//Make requests to datasources
  		//Query DBpedia
  		//String dbpedia_res = DataDBpedia.query_dbpedia(keyword);
-		 DataDBpedia.query_dbpedia(keyword);
+		//DataDBpedia.query_dbpedia(keyword);
 		 
  		//Last.fm
- 		String lastfm_res= DataLastFm.lastfm("artist.getevents",keyword);
+		//Events by artist 
+ 		String lastfm_res= DataLastFm.lastfm("artist.getevents","artist",keyword);
+		 
+ 		//Events by location
+ 		//String lastfm_res= DataLastFm.lastfm("geo.getEvents","location","Amsterdam");
+ 		
  		//YouTube
- 		 String youtube_res= DataYouTube.youtube(keyword);
+ 		//String youtube_res= DataYouTube.youtube(keyword);
 		
  		//Flicr
- 		String flickr_res = DataFlickr.searchFlickr(keyword);
+ 		DataFlickr.searchPhotos(keyword);
+ 		//String flickr_model = DataFlickr.show_model();
 		
 		
 		
  		//Forward XML result to RdfProducer (XSLT)
  		//TODO: relative path??
 		//String xsl_source = getServletContext().getResource("/WEB-INF/test.xsl").toString();
-		String xsl_source = "/Users/"+System.getProperty("user.name")+"/Documents/workspace/iwa_alpha/WebContent/test.xsl";
-		
+ 		
+		String xsl_source = "/Users/"+System.getProperty("user.name")+"/Documents/workspace/iwa_alpha/WebContent/XSL/datasources/lastfm_evnt_artist.xsl";
 		String rdf_data = RdfProducer.XmlToRdf(lastfm_res, xsl_source);
+		
 		//Import RDF/XML to model
+		
+		//Lastfm import
 		JenaFrame.import_rdf(rdf_data);
+		
+		//Flickr import
+		JenaFrame.model.add(DataFlickr.flickr_model);
 		
 		//Show model
 		String rdf_model=JenaFrame.show_model();
+		//Show infModel
+		//String rdf_infModel=JenaFrame.show_infModel();
+		
 		
 		 //Query local model
-		 String local_res = JenaFrame.query_model();
+		 //String local_res = JenaFrame.query_model();
 		 
+		//Export to file
+		//JenaFrame.export_infModel();
 		//Response
 		response.setContentType("text/xml;charset=utf-8");
 		out.print(rdf_model);

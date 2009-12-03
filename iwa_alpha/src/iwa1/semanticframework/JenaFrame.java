@@ -4,10 +4,13 @@ import java.io.BufferedReader;
 
 
 
+
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.io.OutputStreamWriter;
 import java.io.InputStreamReader;
@@ -36,6 +39,8 @@ import com.hp.hpl.jena.util.FileManager;
 
 public class JenaFrame {
 	public static Model model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF);
+	public static Model dbmodel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF);
+	public static InfModel infModel = null;
 
 	public static void init()
 	{
@@ -50,6 +55,7 @@ public class JenaFrame {
 	  }
 	 //load the ontology into the model
 	 model.read(inputStream, null);
+
 		
 	}
 	
@@ -70,7 +76,43 @@ public class JenaFrame {
 	
 	}
 	
+	public static String show_infModel()
+	{
+		Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+		reasoner.bindSchema(model);
+		InfModel infModel = ModelFactory.createInfModel(reasoner,dbmodel);	
+		ByteArrayOutputStream rdf_stream= new ByteArrayOutputStream();
+		infModel.write(rdf_stream);
+		return rdf_stream.toString();
+	
+	}
+
+	public static void export_infModel()
+	{
+		try
+		{
+		 FileOutputStream out = new FileOutputStream("InfModel.rdf");
+		 Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+		 reasoner.bindSchema(model);
+		 InfModel infModel = ModelFactory.createInfModel(reasoner,dbmodel);	
+		 infModel.prepare();
+		 infModel.write(out,"RDF/XML");
+	     out.close();
+		}
+		catch (Exception e) {}
+	}
+	
+	
 	public static String query_model() {
+		/*
+		Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+		reasoner.bindSchema(model);
+		infModel = ModelFactory.createInfModel(reasoner,dbmodel);	
+		*/
+		
+		
+		
+		
 		String queryString=
 			"PREFIX owl: <http://www.w3.org/2002/07/owl#> "+
             "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
@@ -83,17 +125,18 @@ public class JenaFrame {
             "PREFIX dbpedia-owl: <http://dbpedia.org/ontology/> "+
             "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "+
             "PREFIX j.0: <http://www.w3.org/2001/sw/DataAccess/tests/result-set#> "+
-            "SELECT   ?property ?hasValue "+
+            "SELECT  ?resource ?property ?hasValue "+
             "WHERE { "+
-            //"?resource a dbpedia-owl:j.0."+
-            "j.0:Jimmy_Page ?property ?hasValue "+
+            "?resource rdfs:label ?artistName."+
+            "?resource  ?property ?hasValue."+
+            "FILTER (regex(?artistName, \"Jimmy Page\"))"+
             "}";
 
 		
 		
 		Query query = QueryFactory.create(queryString);
 		//Query local model
-		QueryExecution local_exec= QueryExecutionFactory.create(query, JenaFrame.model);
+		QueryExecution local_exec= QueryExecutionFactory.create(query, JenaFrame.infModel);
 	    try {
 	    	
             ResultSet results = local_exec.execSelect();
