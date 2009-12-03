@@ -4,9 +4,16 @@ body {
 	font-family: "Arial";
 }
 
+div.page {
+	padding: 0px;
+	margin: 0px;
+	width: 100%;
+	min-height: 100%;
+}
+
 div.content-container {
 	border: 1px solid #333;
-	width: 380px;
+	width: 327px;
 	height: 300px;
 	float:left;
 	overflow: hidden;
@@ -36,7 +43,7 @@ div.content-inside {
 	height: 283px;
 	position: relative;
 	overflow: hidden;
-	background: #6FA;
+	background: #6BF;
 }
 
 div.content-hover {

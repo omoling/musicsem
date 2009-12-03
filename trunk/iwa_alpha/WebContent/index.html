@@ -27,7 +27,9 @@
 
 </head>
 
-<body onload="initializeMap();">
+<body onload="initializeMap();" 
+	onmouseup="$(function() { $('#map-container').draggable('enable'); });">
+<div id="page" class="page">
 <form action="MainServlet"  name="keyform"  onsubmit= "return keyNotEmpty()" method="post">
 		Artist:
 		<input type="text" id="search" name="search" /><br />
@@ -41,7 +43,9 @@
 <br /><br />
 
 <div id="artist-container" class="content-container" onmousedown="increaseZ('artist-container');">
-<div id="artist" class="content-box">artist</div>
+<div id="artist" class="content-box">artist<br />
+<div id="artistinfo" class="content-inside">artist info</div>
+</div>
 <div id="artist-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
 
@@ -56,32 +60,33 @@
 <div id="map" class="content-box">
 <div id="map-title" class="content-title">Google Maps</div>
 <div id="map_canvas" class="content-inside" 
-	onmousedown="$(function() { $('#map-container').draggable('disable'); });" 
-	onmouseup="$(function() { $('#map-container').draggable('enable'); });"></div>
+	onmousedown="$(function() { $('#map-container').draggable('disable'); });"></div>
 </div>
 <div id="map-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
 
 <div id="video-container" class="content-container" onmousedown="increaseZ('video-container');">
 <div id="video" class="content-box">Youtube<br />
-<div id="ytplayer" class="content-inside"></div>
-</div><br/>
+<div id="ytplayer" class="content-inside"> 
  <a href="javascript:void(0);" onclick="play();">Play</a>
  <a href="javascript:void(0);" onclick="pause();">Pause</a>
- <a href="javascript:void(0);" onclick="stop();">Stop</a>
+ <a href="javascript:void(0);" onclick="stop();">Stop</a></div>
+</div>
 <div id="video-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
 
 <div id="image-container" class="content-container" onmousedown="increaseZ('image-container');">
-<div id="image" class="content-box">image</div>
+<div id="image" class="content-box">image<br />
+<div id="images" class="content-inside">images</div>
+</div>
 <div id="image-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
-<!-- 
+
 <script type="text/javascript">
 	var params = { allowScriptAccess: "always" };
 	swfobject.embedSWF(
-		"http://www.youtube.com/v/tFI7JAybF6E&enablejsapi=1&playerapiid=ytplayer", 
-		"ytplayer", "425", "365", "8", null, null, params);
+		"http://www.youtube.com/v/OGg8A2zfWKg&enablejsapi=1&playerapiid=ytplayer", 
+		"ytplayer", "327", "283", "8", null, null, params);
 
 	function play() {
 		  if (ytplayer) {
@@ -101,6 +106,7 @@
 		  }
 		}
 </script>
- -->
+
+</div>
 </body>
 </html>
