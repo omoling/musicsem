@@ -46,7 +46,7 @@ public class MainServlet extends HttpServlet {
  		//String lastfm_res= DataLastFm.lastfm("geo.getEvents","location","Amsterdam");
  		
  		//YouTube
- 		//String youtube_res= DataYouTube.youtube(keyword);
+ 		String youtube_res= DataYouTube.youtube(keyword);
 		
  		//Flicr
  		DataFlickr.searchPhotos(keyword);
