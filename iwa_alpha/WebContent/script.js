@@ -1,7 +1,20 @@
+//global vars
+var _zIndex = 0;
+
+function keyNotEmpty()
+{
+	if ( document.getElementById("search").value.length==0  ){
+		alert("No keyword was entered!")
+		return false;
+	} else {
+		return true;
+	}
+}
+
 function getXMLObject()  //XML OBJECT
 {
-   var xmlHttp = false;
-   try {
+	var xmlHttp = false;
+	try {
      xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");  // For Old Microsoft Browsers
    }
    catch (e) {
@@ -151,6 +164,28 @@ function isloading(id){
 function loaded(id) {
 	document.getElementById(id+'-hover').style.display = 'none';
 }
+
+function initializeMap() {
+    var latlng = new google.maps.LatLng(52.3833, 4.9);
+    var myOptions = {
+      zoom: 10,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);    
+}
+
+// increase and assign global z-index
+function increaseZ(id){
+	_zIndex += 1;
+	document.getElementById(id).style.zIndex = _zIndex;
+}
+
+
+
+
+//***************************************************************
+//Testing functions
 
 function testXslLoading(){
 	alert("going to try");
