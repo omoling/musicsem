@@ -67,7 +67,8 @@
 
 <div id="video-container" class="content-container" onmousedown="increaseZ('video-container');">
 <div id="video" class="content-box">Youtube<br />
-<div id="ytplayer" class="content-inside"> 
+<div id="video-content" class="content-inside">
+<div id="ytplayer"> </div>
  <a href="javascript:void(0);" onclick="play();">Play</a>
  <a href="javascript:void(0);" onclick="pause();">Pause</a>
  <a href="javascript:void(0);" onclick="stop();">Stop</a></div>
@@ -86,7 +87,8 @@
 	var params = { allowScriptAccess: "always" };
 	swfobject.embedSWF(
 		"http://www.youtube.com/v/OGg8A2zfWKg&enablejsapi=1&playerapiid=ytplayer", 
-		"ytplayer", "327", "283", "8", null, null, params);
+		//"ytplayer", "327", "283", "8", null, null, params);
+		"ytplayer", "307", "270", "8", null, null, params);
 
 	function play() {
 		  if (ytplayer) {

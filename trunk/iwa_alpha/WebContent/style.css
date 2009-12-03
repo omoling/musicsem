@@ -14,7 +14,7 @@ div.page {
 div.content-container {
 	border: 1px solid #333;
 	width: 327px;
-	height: 300px;
+	min-height: 300px;
 	float:left;
 	overflow: hidden;
 	margin: 5px 0px 0px 5px;
@@ -40,9 +40,9 @@ div.content-title {
 
 div.content-inside {
 	width: 100%;
-	height: 283px;
+	min-height: 283px;
 	position: relative;
-	overflow: hidden;
+	
 	background: #6BF;
 }
 
