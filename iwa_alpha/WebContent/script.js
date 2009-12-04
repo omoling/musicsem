@@ -1,5 +1,15 @@
 //global vars
 var _zIndex = 0;
+var map;
+
+function initializePage(){
+	
+	//Youtube
+	initializeYoutube();
+	
+	//Google Maps
+	initializeMap();
+}
 
 function keyNotEmpty()
 {
@@ -165,6 +175,7 @@ function loaded(id) {
 	document.getElementById(id+'-hover').style.display = 'none';
 }
 
+//Google Maps
 function initializeMap() {
     var latlng = new google.maps.LatLng(52.3833, 4.9);
     var myOptions = {
@@ -172,8 +183,59 @@ function initializeMap() {
       center: latlng,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
-    var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);    
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);    
 }
+
+//Youtube
+var params;
+var atts;
+function initializeYoutube(){
+	
+	// allowScriptAccess must be set to allow the Javascript from one 
+	// domain to access the swf on the youtube domain
+	params = { allowScriptAccess: "always", bgcolor: "#cccccc" };
+	// this sets the id of the object or embed tag to 'myytplayer'.
+	// You then use this id to access the swf and make calls to the player's API
+	atts = { id: "myytplayer" };
+	swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer", 
+	                   "ytapiplayer", "327", "283", "8", null, null, params, atts);
+	
+	/*
+	var params = { allowScriptAccess: "always" };
+	swfobject.embedSWF(
+		"http://www.youtube.com/v/OGg8A2zfWKg&enablejsapi=1&playerapiid=ytplayer", 
+		"ytplayer", "327", "283", "8", null, null, params);
+		//"ytplayer", "307", "270", "8", null, null, params);
+	*/
+}
+
+function resizeSWF(width, height){
+	var videoid = document.getElementById("videoid").value;
+	var state = getPlayerState();
+	clearVideo();
+	swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer", 
+            "ytapiplayer", ""+width, ""+height, "8", null, null, params, atts);
+	loadNewVideo(videoid, 0);
+	setytplayerstate(state);
+}
+
+function play() {
+	  if (ytplayer) {
+		ytplayer.playVideo();
+	  }
+	}
+
+	function pause() {
+	  if (ytplayer) {
+		ytplayer.pauseVideo();
+	  }
+	}
+
+	function stop() {
+	  if (ytplayer) {
+		ytplayer.stopVideo();
+	  }
+	}
 
 // increase and assign global z-index
 function increaseZ(id){
@@ -182,7 +244,15 @@ function increaseZ(id){
 }
 
 
-
+function eventsInArea(){
+	var bounds = map.getBounds();
+	var sw = bounds.getSouthWest();
+	var ne = bounds.getNorthEast();
+	//alert(sw.lat() + " " + sw.lng() + " " + ne.lat() + " " + ne.lng());
+	
+	//lat SW, lng SW, lat NE, lng NE
+	alert(bounds.toUrlValue());
+}
 
 //***************************************************************
 //Testing functions

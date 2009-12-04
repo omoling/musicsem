@@ -22,93 +22,305 @@
 		$("#map-container").draggable();
 		$("#video-container").draggable();
 		$("#image-container").draggable();
+		$("#test-container").draggable();
 	});
-	</script>
+
+	//set resizable containers
+	$(function(){
+		$("#artist-container").resizable();
+		$("#event-container").resizable();
+		$("#map-container").resizable({
+			handles: "all",
+			stop: function(){
+				//get old center
+				var oldCenter = map.getCenter();
+				//determine div new size
+				var w = document.getElementById("map-container").offsetWidth;
+				var h = document.getElementById("map-container").offsetHeight;
+				h = h - 20 - 20;
+				//set new size
+				document.getElementById("map_canvas").style.width=w+"px";
+				document.getElementById("map_canvas").style.height=h+"px";
+				//tell map to check new size
+				google.maps.event.trigger(map, 'resize');
+				//set new center as old center
+				map.setCenter(oldCenter);
+			}
+		});
+		$("#video-container").resizable({
+			handles: "all",
+			stop: function(){
+				//determine new div size
+				var w = document.getElementById("video-container").offsetWidth;
+				var h = document.getElementById("video-container").offsetHeight;
+				h = h - 20 - 20;
+				//set new size
+				document.getElementById("video-content").style.width=w+"px";
+				document.getElementById("video-content").style.height=h+"px";
+				//resize SWF object
+				resizeSWF(w, h);
+			}
+		});
+		$("#image-container").resizable();
+		$("#test-container").resizable();
+	});
+</script>
+<!-- Use the Google AJAX Libraries API:
+        http://code.google.com/apis/ajaxlibs/ -->
+    <script src="http://www.google.com/jsapi"></script>
+    <script>
+      google.load("swfobject", "2.1");
+    </script>
+
+    <script type="text/javascript">
+
+        function updateHTML(elmId, value) {
+          document.getElementById(elmId).innerHTML = value;
+        }
+
+        function setytplayerState(newState) {
+          updateHTML("playerstate", newState);
+        }
+
+        function onYouTubePlayerReady(playerId) {
+          ytplayer = document.getElementById("myytplayer");
+          setInterval(updateytplayerInfo, 250);
+          updateytplayerInfo();
+          ytplayer.addEventListener("onStateChange", "onytplayerStateChange");
+          ytplayer.addEventListener("onError", "onPlayerError");
+        }
+
+        function onytplayerStateChange(newState) {
+          setytplayerState(newState);
+        }
+
+        function onPlayerError(errorCode) {
+          alert("An error occured: " + errorCode);
+        }
+
+        function updateytplayerInfo() {
+          updateHTML("bytesloaded", getBytesLoaded());
+          updateHTML("bytestotal", getBytesTotal());
+          updateHTML("videoduration", getDuration());
+          updateHTML("videotime", getCurrentTime());
+          updateHTML("startbytes", getStartBytes());
+          updateHTML("volume", getVolume());
+        }
+
+        // functions for the api calls
+        function loadNewVideo(id, startSeconds) {
+          if (ytplayer) {
+            ytplayer.loadVideoById(id, parseInt(startSeconds));
+          }
+          document.getElementById("videoid").value = id;
+        }
+
+        function cueNewVideo(id, startSeconds) {
+          if (ytplayer) {
+            ytplayer.cueVideoById(id, startSeconds);
+          }
+        }
+
+        function play() {
+          if (ytplayer) {
+            ytplayer.playVideo();
+          }
+        }
+
+        function pause() {
+          if (ytplayer) {
+            ytplayer.pauseVideo();
+          }
+        }
+
+        function stop() {
+          if (ytplayer) {
+            ytplayer.stopVideo();
+          }
+        }
+
+        function getPlayerState() {
+          if (ytplayer) {
+            return ytplayer.getPlayerState();
+          }
+        }
+
+        function seekTo(seconds) {
+          if (ytplayer) {
+            ytplayer.seekTo(seconds, true);
+          }
+        }
+
+        function getBytesLoaded() {
+          if (ytplayer) {
+            return ytplayer.getVideoBytesLoaded();
+          }
+        }
+
+        function getBytesTotal() {
+          if (ytplayer) {
+            return ytplayer.getVideoBytesTotal();
+          }
+        }
+
+        function getCurrentTime() {
+          if (ytplayer) {
+            return ytplayer.getCurrentTime();
+          }
+        }
+
+        function getDuration() {
+          if (ytplayer) {
+            return ytplayer.getDuration();
+          }
+        }
+
+        function getStartBytes() {
+          if (ytplayer) {
+            return ytplayer.getVideoStartBytes();
+          }
+        }
+
+        function mute() {
+          if (ytplayer) {
+            ytplayer.mute();
+          }
+        }
+
+        function unMute() {
+          if (ytplayer) {
+            ytplayer.unMute();
+          }
+        }
+        
+        function getEmbedCode() {
+          alert(ytplayer.getVideoEmbedCode());
+        }
+
+        function getVideoUrl() {
+          alert(ytplayer.getVideoUrl());
+        }
+        
+        function setVolume(newVolume) {
+          if (ytplayer) {
+            ytplayer.setVolume(newVolume);
+          }
+        }
+
+        function getVolume() {
+          if (ytplayer) {
+            return ytplayer.getVolume();
+          }
+        }
+
+        function clearVideo() {
+          if (ytplayer) {
+            ytplayer.clearVideo();
+          }
+        }
+        
+
+    </script>
+
 
 </head>
 
-<body onload="initializeMap();" 
-	onmouseup="$(function() { $('#map-container').draggable('enable'); });">
+<body onload="initializePage();" 
+	onmouseup="$(function() { 
+		//restore draggable containers
+		$('#map-container').draggable('enable'); 
+		//$('#video-container').draggable('enable');
+	});">
 <div id="page" class="page">
 <form action="MainServlet"  name="keyform"  onsubmit= "return keyNotEmpty()" method="post">
-		Artist:
-		<input type="text" id="search" name="search" /><br />
-		<input type="submit" value="Search" /><br />
+	Artist:
+	<input type="text" id="search" name="search" /><br />
+	<input type="submit" value="Search" /><br />
 </form>		
 <br /><br />
 <input type="button" onclick="ajaxSearch();" value="Search" />
-<input type="button" onclick="javascript:isloading('event');" value="TestJS" />
-<input type="button" onclick="javascript:loaded('event');" value="TestJS2" />
+<input type="button" onclick="javascript:isloading('event');" value="TestLoading" />
+<input type="button" onclick="javascript:loaded('event');" value="TestLoaded" />
 <input type="button" onclick="javascript:testXslLoading();" value="TestXslLoading" />
 <br /><br />
 
+<!-- ************************************* ARTIST ********************************************** -->
 <div id="artist-container" class="content-container" onmousedown="increaseZ('artist-container');">
-<div id="artist" class="content-box">artist<br />
-<div id="artistinfo" class="content-inside">artist info</div>
-</div>
-<div id="artist-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
+	<div id="artist" class="content-box">artist<br />
+	<div id="artistinfo" class="content-inside">artist info</div>
+	</div>
+	<div id="artist-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
 
+<!-- ************************************* EVENT *********************************************** -->
 <div id="event-container" class="content-container" onmousedown="increaseZ('event-container');">
-<div id="event" class="content-box">event<br />
-<div id="events" class="content-inside">events events</div>
-</div>
-<div id="event-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
+	<div id="event" class="content-box">event<br />
+	<div id="events" class="content-inside">events events</div>
+	</div>
+	<div id="event-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
 
+<!-- ************************************* MAP ************************************************** -->
 <div id="map-container" class="content-container" onmousedown="increaseZ('map-container');">
-<div id="map" class="content-box">
-<div id="map-title" class="content-title">Google Maps</div>
-<div id="map_canvas" class="content-inside" 
-	onmousedown="$(function() { $('#map-container').draggable('disable'); });"></div>
-</div>
-<div id="map-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
+	<div id="map" class="content-box">
+		<div id="map-title" class="content-title">Google Maps</div>
+		<div id="map_canvas" class="content-inside" 
+			onmousedown="$(function() { $('#map-container').draggable('disable'); });">
+		</div>
+		<!--
+		<div id="map-bottom" class="bottombar" 
+			onmousedown="$(function() { $('#map-container').draggable('disable'); });">
+			Play 
+		</div>
+		-->
+		<div id="map-bottom" class="bottombar" >
+			<a href="javascript:void(0);" onclick="eventsInArea();">Events today in the area</a>
+		</div>
+	</div>
+	<div id="map-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
 
+<!-- ************************************* VIDEO *********************************************** -->
 <div id="video-container" class="content-container" onmousedown="increaseZ('video-container');">
-<div id="video" class="content-box">Youtube<br />
-<div id="video-content" class="content-inside">
-<div id="ytplayer"> </div>
- <a href="javascript:void(0);" onclick="play();">Play</a>
- <a href="javascript:void(0);" onclick="pause();">Pause</a>
- <a href="javascript:void(0);" onclick="stop();">Stop</a></div>
-</div>
-<div id="video-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
+	<div id="video" class="content-box">Youtube<br />
+		<div id="video-content" class="content-inside"
+			onmousedown="$(function() { $('#video-container').draggable('disable'); });"
+			onmouseup="$(function() { $('#video-container').draggable('enable'); });"
+			>
+		<div id="ytapiplayer"></div>
+		</div>
+		<div id="video-bottom" class="bottombar">
+			<a href="javascript:void(0);" onclick="play();">Play</a>
+			<a href="javascript:void(0);" onclick="pause();">Pause</a>
+			<a href="javascript:void(0);" onclick="stop();">Stop</a>
+			<input type="text" size="11" id="loadvideoid" value="u1zgFlCw8Aw" />
+      <a href="javascript:void(0)" onclick="loadNewVideo(document.getElementById('loadvideoid').value, document.getElementById('startseconds').value)">&lt;-
+        Load video</a> | Start at: <input type="text" size="4" id="startseconds" value="0" />
+		</div>
+	</div>
+	<div id="video-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
 
+<!-- ************************************* IMAGE *********************************************** -->
 <div id="image-container" class="content-container" onmousedown="increaseZ('image-container');">
-<div id="image" class="content-box">image<br />
-<div id="images" class="content-inside">images</div>
+	<div id="image" class="content-box">image<br />
+	<div id="images" class="content-inside">images</div>
+	</div>
+	<div id="image-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
-<div id="image-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
+
+<div id="test-container" class="content-container" onmousedown="increaseZ('test-container');">
+	<!-- 
+	<div id="test" class="content-box">test<br />
+	<div id="test-" class="content-inside">test test</div>
+	</div>
+	<div id="test-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
+	 -->
 </div>
-
-<script type="text/javascript">
-	var params = { allowScriptAccess: "always" };
-	swfobject.embedSWF(
-		"http://www.youtube.com/v/OGg8A2zfWKg&enablejsapi=1&playerapiid=ytplayer", 
-		//"ytplayer", "327", "283", "8", null, null, params);
-		"ytplayer", "307", "270", "8", null, null, params);
-
-	function play() {
-		  if (ytplayer) {
-			ytplayer.playVideo();
-		  }
-		}
-
-		function pause() {
-		  if (ytplayer) {
-			ytplayer.pauseVideo();
-		  }
-		}
-
-		function stop() {
-		  if (ytplayer) {
-			ytplayer.stopVideo();
-		  }
-		}
-</script>
 
 </div>
+
+<input type="hidden" id="videoid" value="u1zgFlCw8Aw" />
+
 </body>
 </html>
