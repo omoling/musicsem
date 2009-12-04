@@ -5,6 +5,10 @@ body {
 	font-size: 12px;
 }
 
+img {
+	border: 0px;
+}
+
 div.page {
 	padding: 0px;
 	margin: 0px;
@@ -50,6 +54,8 @@ div.content-inside {
 	height: 283px;
 	position: relative;
 	background: #6BF;
+	overflow: hidden;
+	text-align: left;
 }
 
 div.bottombar {
@@ -70,3 +76,22 @@ div.content-hover {
 	z-index: 10;
 	display: none;
 }
+
+div.imageholder {
+	width: 327px;
+	height: 283px;
+	overflow:hidden;"
+}
+
+ul.eventlist {
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+li.eventlist {
+	margin: 3px 5px 3px 5px;
+	padding: 3px 5px 3px 5px;
+	background: #999;
+}
+

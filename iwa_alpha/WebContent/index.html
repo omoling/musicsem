@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
 
@@ -7,6 +7,9 @@
 <title>MusicSem</title>
 <link rel="stylesheet" href="style.css" type="text/css" /> 
 <link rel="stylesheet" href="jquery/css/ui-lightness/jquery-ui-1.7.2.custom.css" type="text/css" />
+<!--
+<link rel="stylesheet" href="slideitmoo/styles.css" type="text/css" />
+-->
 
 <script type="text/javascript" src="script.js"></script>
 <script type="text/javascript" src="jquery/js/jquery-1.3.2.min.js"></script>
@@ -20,7 +23,10 @@
 		$("#artist-container").draggable();
 		$("#event-container").draggable();
 		$("#map-container").draggable();
-		$("#video-container").draggable();
+		$("#video-container").draggable({
+			handles: "all",
+			opacity: 1.0
+		});
 		$("#image-container").draggable();
 		$("#test-container").draggable();
 	});
@@ -47,6 +53,7 @@
 				map.setCenter(oldCenter);
 			}
 		});
+		/* Video container should not be resizable
 		$("#video-container").resizable({
 			handles: "all",
 			stop: function(){
@@ -61,167 +68,36 @@
 				resizeSWF(w, h);
 			}
 		});
-		$("#image-container").resizable();
+		*/
+		$("#image-container").resizable({
+			handles: "all",
+			stop: function(){
+				//determine new div size
+				var w = document.getElementById("image-container").offsetWidth;
+				var h = document.getElementById("image-container").offsetHeight;
+				h = h - 20 - 20;
+				//set new size
+				document.getElementById("image-content").style.width=w+"px";
+				document.getElementById("image-content").style.height=h+"px";
+				resizeImage(w, h);
+			}
+		});
 		$("#test-container").resizable();
 	});
 </script>
+
+<!-- 
+<script type="text/javascript" src="slideitmoo/mootools-1.2.1-core.js"></script>
+<script type="text/javascript" src="slideitmoo/mootools-1.2-more.js"></script>
+<script type="text/javascript" src="slideitmoo/slideitmoo-1.1.js"></script>
+-->
+ 
 <!-- Use the Google AJAX Libraries API:
         http://code.google.com/apis/ajaxlibs/ -->
-    <script src="http://www.google.com/jsapi"></script>
-    <script>
-      google.load("swfobject", "2.1");
-    </script>
-
-    <script type="text/javascript">
-
-        function updateHTML(elmId, value) {
-          document.getElementById(elmId).innerHTML = value;
-        }
-
-        function setytplayerState(newState) {
-          updateHTML("playerstate", newState);
-        }
-
-        function onYouTubePlayerReady(playerId) {
-          ytplayer = document.getElementById("myytplayer");
-          setInterval(updateytplayerInfo, 250);
-          updateytplayerInfo();
-          ytplayer.addEventListener("onStateChange", "onytplayerStateChange");
-          ytplayer.addEventListener("onError", "onPlayerError");
-        }
-
-        function onytplayerStateChange(newState) {
-          setytplayerState(newState);
-        }
-
-        function onPlayerError(errorCode) {
-          alert("An error occured: " + errorCode);
-        }
-
-        function updateytplayerInfo() {
-          updateHTML("bytesloaded", getBytesLoaded());
-          updateHTML("bytestotal", getBytesTotal());
-          updateHTML("videoduration", getDuration());
-          updateHTML("videotime", getCurrentTime());
-          updateHTML("startbytes", getStartBytes());
-          updateHTML("volume", getVolume());
-        }
-
-        // functions for the api calls
-        function loadNewVideo(id, startSeconds) {
-          if (ytplayer) {
-            ytplayer.loadVideoById(id, parseInt(startSeconds));
-          }
-          document.getElementById("videoid").value = id;
-        }
-
-        function cueNewVideo(id, startSeconds) {
-          if (ytplayer) {
-            ytplayer.cueVideoById(id, startSeconds);
-          }
-        }
-
-        function play() {
-          if (ytplayer) {
-            ytplayer.playVideo();
-          }
-        }
-
-        function pause() {
-          if (ytplayer) {
-            ytplayer.pauseVideo();
-          }
-        }
-
-        function stop() {
-          if (ytplayer) {
-            ytplayer.stopVideo();
-          }
-        }
-
-        function getPlayerState() {
-          if (ytplayer) {
-            return ytplayer.getPlayerState();
-          }
-        }
-
-        function seekTo(seconds) {
-          if (ytplayer) {
-            ytplayer.seekTo(seconds, true);
-          }
-        }
-
-        function getBytesLoaded() {
-          if (ytplayer) {
-            return ytplayer.getVideoBytesLoaded();
-          }
-        }
-
-        function getBytesTotal() {
-          if (ytplayer) {
-            return ytplayer.getVideoBytesTotal();
-          }
-        }
-
-        function getCurrentTime() {
-          if (ytplayer) {
-            return ytplayer.getCurrentTime();
-          }
-        }
-
-        function getDuration() {
-          if (ytplayer) {
-            return ytplayer.getDuration();
-          }
-        }
-
-        function getStartBytes() {
-          if (ytplayer) {
-            return ytplayer.getVideoStartBytes();
-          }
-        }
-
-        function mute() {
-          if (ytplayer) {
-            ytplayer.mute();
-          }
-        }
-
-        function unMute() {
-          if (ytplayer) {
-            ytplayer.unMute();
-          }
-        }
-        
-        function getEmbedCode() {
-          alert(ytplayer.getVideoEmbedCode());
-        }
-
-        function getVideoUrl() {
-          alert(ytplayer.getVideoUrl());
-        }
-        
-        function setVolume(newVolume) {
-          if (ytplayer) {
-            ytplayer.setVolume(newVolume);
-          }
-        }
-
-        function getVolume() {
-          if (ytplayer) {
-            return ytplayer.getVolume();
-          }
-        }
-
-        function clearVideo() {
-          if (ytplayer) {
-            ytplayer.clearVideo();
-          }
-        }
-        
-
-    </script>
-
+<script src="http://www.google.com/jsapi"></script>
+<script>
+	google.load("swfobject", "2.1");
+</script>
 
 </head>
 
@@ -229,7 +105,7 @@
 	onmouseup="$(function() { 
 		//restore draggable containers
 		$('#map-container').draggable('enable'); 
-		//$('#video-container').draggable('enable');
+		$('#video-container').draggable('enable');
 	});">
 <div id="page" class="page">
 <form action="MainServlet"  name="keyform"  onsubmit= "return keyNotEmpty()" method="post">
@@ -246,16 +122,47 @@
 
 <!-- ************************************* ARTIST ********************************************** -->
 <div id="artist-container" class="content-container" onmousedown="increaseZ('artist-container');">
-	<div id="artist" class="content-box">artist<br />
-	<div id="artistinfo" class="content-inside">artist info</div>
+	<div id="artist" class="content-box">
+		<div id="artist-title" class="content-title">Artist</div>
+		<div id="artistinfo" class="content-inside">
+			<strong><span id="artist-name">U2</span></strong><br />
+			<span id="artist-description">U2 is an Irish rock band which formed in 1976 in Dublin, 
+			Ireland. Since the band's formation, they have consisted of Bono (real name Paul Hewson) 
+			(vocals, guitar, harmonica), The Edge (real name David Evans) (guitar, keyboards, backing 
+			vocals), Adam Clayton (bass) and Larry Mullen, Jr. (drums, percussion). The band is the 
+			biggest selling alternative rock act of all time, having sold 140 million albums worldwide 
+			as of 2008. They have won 22 Grammys and were inducted into the Rock & Roll Hall of Fame in 
+			2005. As of 2009, they have released 12 albums and 58 singles.</span><br />
+		</div>
+	</div>
+	<div id="artist-bottom" class="bottombar">
+		
 	</div>
 	<div id="artist-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
 
 <!-- ************************************* EVENT *********************************************** -->
 <div id="event-container" class="content-container" onmousedown="increaseZ('event-container');">
-	<div id="event" class="content-box">event<br />
-	<div id="events" class="content-inside">events events</div>
+	<div id="event" class="content-box">
+		<div id="event-title" class="content-title">Events</div>
+		<div id="events-content" class="content-inside">
+			<ul class="eventlist">
+				<li class="eventlist">
+					<span>Event title</span> - 
+					<span>Start date</span><br />
+					<span>Description description description description</span><br />
+					<span>Venue</span> - 
+					<span><a href="javascript:void(0);" onclick"updateMap(2.2, 2.2);">Venue address</a></span>
+					<span>Artist</span><br />
+					<span>Headliner</span><br />
+					<span>Website</span>
+				</li>
+				<li class="eventlist">b</li>
+			</ul>
+		</div>
+	</div>
+	<div id="event-bottom" class="bottombar" >
+		
 	</div>
 	<div id="event-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
@@ -282,11 +189,13 @@
 
 <!-- ************************************* VIDEO *********************************************** -->
 <div id="video-container" class="content-container" onmousedown="increaseZ('video-container');">
-	<div id="video" class="content-box">Youtube<br />
+	<div id="video" class="content-box">
+		<div id="video-title" class="content-title">Youtube</div>
 		<div id="video-content" class="content-inside"
 			onmousedown="$(function() { $('#video-container').draggable('disable'); });"
-			onmouseup="$(function() { $('#video-container').draggable('enable'); });"
+			onmouseup="$(function() { $('#video-container').draggable('enable'); });" 
 			>
+		<!--<div id="video-content" class="content-inside">-->
 		<div id="ytapiplayer"></div>
 		</div>
 		<div id="video-bottom" class="bottombar">
@@ -294,8 +203,8 @@
 			<a href="javascript:void(0);" onclick="pause();">Pause</a>
 			<a href="javascript:void(0);" onclick="stop();">Stop</a>
 			<input type="text" size="11" id="loadvideoid" value="u1zgFlCw8Aw" />
-      <a href="javascript:void(0)" onclick="loadNewVideo(document.getElementById('loadvideoid').value, document.getElementById('startseconds').value)">&lt;-
-        Load video</a> | Start at: <input type="text" size="4" id="startseconds" value="0" />
+      		<a href="javascript:void(0)" onclick="loadNewVideo(document.getElementById('loadvideoid').value, document.getElementById('startseconds').value)">&lt;-
+        	Load video</a> | Start at: <input type="text" size="4" id="startseconds" value="0" />
 		</div>
 	</div>
 	<div id="video-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
@@ -303,8 +212,25 @@
 
 <!-- ************************************* IMAGE *********************************************** -->
 <div id="image-container" class="content-container" onmousedown="increaseZ('image-container');">
-	<div id="image" class="content-box">image<br />
-	<div id="images" class="content-inside">images</div>
+	<div id="image" class="content-box">
+		<div id="image-title" class="content-title">Flickr</div>
+	<div id="image-content" class="content-inside">
+		<div id="image-holder" class="imageholder">
+			<a id="imagelink" href="http://farm4.static.flickr.com/3630/3681432106_a0366e4674.jpg" target="_blank">
+				<img id="currentimage" src="http://farm4.static.flickr.com/3630/3681432106_a0366e4674.jpg" 
+					alt="U2" width="100%" height="100%" />
+			</a>
+		</div>
+	</div>
+	<div id="image-bottom" class="bottombar">
+		<div style="float: left;">
+			<strong><span id="imagetitle">Image title</span></strong>
+		</div>
+		<div style="float:right;">
+			<a href="javascript:void(0);" onclick="previousImage();" >previous</a> | 
+			<a href="javascript:void(0);" onclick="nextImage();" >next</a>
+		</div>
+	</div>
 	</div>
 	<div id="image-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
