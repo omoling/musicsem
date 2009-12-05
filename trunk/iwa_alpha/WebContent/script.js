@@ -1,6 +1,7 @@
 //global vars
 var _zIndex = 0;
 var map;
+var centerMarker;
 
 //current content in containers
 var current_artist;
@@ -217,9 +218,31 @@ function initializeMap() {
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);    
 }
 
-function updateMap(lat, lng){
-	var newCenter = new Lat
-	map.setCenter();
+function updateMap(lat, lng, title){
+	//set new center
+	var newCenter = new google.maps.LatLng(parseInt(lat),parseInt(lng));
+	map.setCenter(newCenter);
+	//set new center marker
+	if(null == centerMarker) {
+		centerMarker = new google.maps.Marker({
+	     		position: newCenter, 
+	      		map: map,
+	      		title: title
+			}); 
+	} else {
+		centerMarker.position = newCenter;
+	}
+}
+
+function newArtist(name){
+	
+	//update artist container
+	
+	//update event container for given new artist
+	
+	//update video container for given new artist
+	
+	alert("not impelemnted yet!");
 	
 }
 

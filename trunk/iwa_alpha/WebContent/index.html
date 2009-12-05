@@ -12,6 +12,7 @@
 -->
 
 <script type="text/javascript" src="script.js"></script>
+<script type="text/javascript" src="objects.js"></script>
 <script type="text/javascript" src="jquery/js/jquery-1.3.2.min.js"></script>
 <script type="text/javascript" src="jquery/js/jquery-ui-1.7.2.custom.min.js"></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
@@ -33,8 +34,30 @@
 
 	//set resizable containers
 	$(function(){
-		$("#artist-container").resizable();
-		$("#event-container").resizable();
+		$("#artist-container").resizable({
+			handles: "all",
+			stop: function(){
+				//determine new div size
+				var w = document.getElementById("artist-container").offsetWidth;
+				var h = document.getElementById("artist-container").offsetHeight;
+				h = h - 20 - 20;
+				//set new size
+				document.getElementById("artist-content").style.width=w+"px";
+				document.getElementById("artist-content").style.height=h+"px";
+			}
+		});
+		$("#event-container").resizable({
+			handles: "all",
+			stop: function(){
+				//determine new div size
+				var w = document.getElementById("event-container").offsetWidth;
+				var h = document.getElementById("event-container").offsetHeight;
+				h = h - 20 - 20;
+				//set new size
+				document.getElementById("event-content").style.width=w+"px";
+				document.getElementById("event-content").style.height=h+"px";
+			}
+		});
 		$("#map-container").resizable({
 			handles: "all",
 			stop: function(){
@@ -115,24 +138,27 @@
 </form>		
 <br /><br />
 <input type="button" onclick="ajaxSearch();" value="Search" />
-<input type="button" onclick="javascript:isloading('event');" value="TestLoading" />
-<input type="button" onclick="javascript:loaded('event');" value="TestLoaded" />
-<input type="button" onclick="javascript:testXslLoading();" value="TestXslLoading" />
+<input type="button" onclick="isloading('event');" value="TestLoading" />
+<input type="button" onclick="loaded('event');" value="TestLoaded" />
+<input type="button" onclick="testXslLoading();" value="TestXslLoading" />
+<input type="button" onclick="testObjects();" value="Test Objects" />
 <br /><br />
 
 <!-- ************************************* ARTIST ********************************************** -->
 <div id="artist-container" class="content-container" onmousedown="increaseZ('artist-container');">
 	<div id="artist" class="content-box">
 		<div id="artist-title" class="content-title">Artist</div>
-		<div id="artistinfo" class="content-inside">
-			<strong><span id="artist-name">U2</span></strong><br />
-			<span id="artist-description">U2 is an Irish rock band which formed in 1976 in Dublin, 
-			Ireland. Since the band's formation, they have consisted of Bono (real name Paul Hewson) 
-			(vocals, guitar, harmonica), The Edge (real name David Evans) (guitar, keyboards, backing 
-			vocals), Adam Clayton (bass) and Larry Mullen, Jr. (drums, percussion). The band is the 
-			biggest selling alternative rock act of all time, having sold 140 million albums worldwide 
-			as of 2008. They have won 22 Grammys and were inducted into the Rock & Roll Hall of Fame in 
-			2005. As of 2009, they have released 12 albums and 58 singles.</span><br />
+		<div id="artist-content" class="content-inside">
+			<div style="padding:3px;">
+				<strong><span id="artist-name">U2</span></strong><br />
+				<span id="artist-description" style="padding:3px;">U2 is an Irish rock band which formed in 1976 in Dublin, 
+				Ireland. Since the band's formation, they have consisted of Bono (real name Paul Hewson) 
+				(vocals, guitar, harmonica), The Edge (real name David Evans) (guitar, keyboards, backing 
+				vocals), Adam Clayton (bass) and Larry Mullen, Jr. (drums, percussion). The band is the 
+				biggest selling alternative rock act of all time, having sold 140 million albums worldwide 
+				as of 2008. They have won 22 Grammys and were inducted into the Rock & Roll Hall of Fame in 
+				2005. As of 2009, they have released 12 albums and 58 singles.</span><br />
+			</div>
 		</div>
 	</div>
 	<div id="artist-bottom" class="bottombar">
@@ -145,17 +171,17 @@
 <div id="event-container" class="content-container" onmousedown="increaseZ('event-container');">
 	<div id="event" class="content-box">
 		<div id="event-title" class="content-title">Events</div>
-		<div id="events-content" class="content-inside">
+		<div id="event-content" class="content-inside">
 			<ul class="eventlist">
 				<li class="eventlist">
 					<span>Event title</span> - 
 					<span>Start date</span><br />
 					<span>Description description description description</span><br />
 					<span>Venue</span> - 
-					<span><a href="javascript:void(0);" onclick"updateMap(2.2, 2.2);">Venue address</a></span>
-					<span>Artist</span><br />
+					<span><a href="javascript:void(0);" onclick="updateMap(2.2, 2.2, 'Venue address');">Venue address</a></span>
+					<span><a href="javascript:void(0);" onclick="newArtist('Queen');">Artist</a></span><br />
 					<span>Headliner</span><br />
-					<span>Website</span>
+					<span><a href="website" target="_blank">Website</a></span>
 				</li>
 				<li class="eventlist">b</li>
 			</ul>
@@ -181,7 +207,7 @@
 		</div>
 		-->
 		<div id="map-bottom" class="bottombar" >
-			<a href="javascript:void(0);" onclick="eventsInArea();">Events today in the area</a>
+			<input type="button" onclick="eventsInArea();" value="Events today in the area" />
 		</div>
 	</div>
 	<div id="map-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
