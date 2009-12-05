@@ -1,6 +1,8 @@
 package iwa1.datasources;
 
 import java.io.BufferedReader;
+
+
 import java.io.ByteArrayOutputStream;
 
 import java.io.InputStreamReader;
@@ -10,19 +12,31 @@ import java.net.URLEncoder;
 
 import com.aetrion.flickr.Flickr;
 import com.aetrion.flickr.REST;
-import com.aetrion.flickr.photos.SearchParameters;
-import com.aetrion.flickr.photos.PhotoList;
-import com.aetrion.flickr.photos.PhotosInterface;
-import com.aetrion.flickr.photos.Photo;
+import com.aetrion.flickr.photos.*;
 import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.sparql.vocabulary.FOAF;
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.datatypes.*;
+import com.hp.hpl.jena.vocabulary.*;
 
 public class DataFlickr {
-	public static Model flickr_model = ModelFactory.createDefaultModel();
-	public static Resource res = flickr_model.createResource("http://www.kanzaki.com/ns/music#Artist");
+	
+	//The flickr datasource model
+	public static OntModel flickr_model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF);
+	public static Resource res = null;
+	
+	//Properties of the model
+	public static Property title = null;
+	public static Property identifier = null;
 	public static Property name = null; 
-	public static  Property img = null; 
+	public static Property depicts = null;
+	public static Property img_width = null;
+	public static Property img_height = null;
+	
+	//FOAF Ontology
+	public static String foafURL = "http://www.nachlin.com/foaf.rdf";
+	
+	//Parameters for the Flick Service
 	public static String api_key = "6d3d002ca456197a60df58cec7a9fadb";
 	public static String flickr_srv = "www.flickr.com";
     public static String artist= null;
@@ -41,7 +55,7 @@ public class DataFlickr {
 	     
 	     //initialize SearchParameter object, this object stores the search keyword
 	     SearchParameters searchParams=new SearchParameters();
-	     searchParams.setSort(SearchParameters.INTERESTINGNESS_DESC);
+	     searchParams.setSort(SearchParameters.RELEVANCE);
 	    
 	     //Create tag keyword array
 	     String[] tags=new String[] {keyword};
@@ -52,7 +66,7 @@ public class DataFlickr {
 	     //Execute search with entered tags
 	     PhotoList photoList=photosInterface.search(searchParams,20,1);
 
-	     //get search result and fetch the photo object and get small square imag's url
+	     //get search result and fetch the photo object and get medium size url
 	     if(photoList!=null)
 	     {
 	    	 //Initialize model
@@ -60,12 +74,19 @@ public class DataFlickr {
 	        //Get search result and check the size of photo result
 	        for(int i=0;i<photoList.size();i++)
 	        {
-	           //get photo object
+	           //Get photo object
 	           Photo photo=(Photo)photoList.get(i);
-	           //Get  photo URL
+	           //Get medium size photo URL
 	           String photo_url= photo.getMediumUrl();
+	           //Get title
+	           String photo_title = photo.getTitle();
+	           //Get size
+	           //Size photo_size = photo.getMediumSize();
+	           //int photo_width = photo_size.getWidth();
+	           //int photo_height = photo_size.getHeight();
+	           
 	           //Add photo to model
-	           res.addProperty(img, photo_url); 
+	           addPhoto(photo_url,photo_title);
 	           
 	        }
 	      }
@@ -76,17 +97,42 @@ public class DataFlickr {
 		}
 	}
 	
+
+	
 	public static void init_model()
 	{
-		
+	 //Set prefixes	
 	 flickr_model.setNsPrefix("foaf","http://xmlns.com/foaf/0.1/");	
-	 flickr_model.setNsPrefix("m","http://www.kanzaki.com/ns/music#");
-	 name = flickr_model.createProperty("http://xmlns.com/foaf/0.1/","name");
-	 img = flickr_model.createProperty("http://xmlns.com/foaf/0.1/","img");
-	 res.addProperty(name, artist);
+	 flickr_model.setNsPrefix("dc", "http://purl.org/dc/elements/1.1/");
+	 flickr_model.setNsPrefix("tiff", "http://ns.adobe.com/tiff/1.0/");
 	 
+	 //Load Ontology
+	 flickr_model.read(foafURL);
+	  	 
+	 //Set properties	 
+	 depicts = flickr_model.getProperty(FOAF.getURI(), "depicts");
+	 name = flickr_model.getProperty(FOAF.getURI(), "name");
+	 title = flickr_model.getProperty(DC.getURI(),"title");
+	 identifier = flickr_model.getProperty(DC.getURI(),"identifier"); 
+	 img_width = flickr_model.createProperty("http://ns.adobe.com/tiff/1.0/","ImageWidth");
+	 img_height = flickr_model.createProperty("http://ns.adobe.com/tiff/1.0/","ImageLength");
 	 
+	 //Create a foaf:Agent Resource
+	 res = flickr_model.createResource(FOAF.Agent);
+	 res.addProperty(name,artist);
+	 	  
 	}
+	
+	public static void addPhoto(String photoURL,String photo_title)
+	{
+		//Create a foaf:Image Resource
+		Resource photo = flickr_model.createResource(FOAF.Image);
+		photo.addProperty(identifier,photoURL);
+		photo.addProperty(title, photo_title);
+        photo.addProperty(depicts,res);
+		
+	}
+	
 	
 	
 	public static String show_model()
@@ -96,34 +142,4 @@ public class DataFlickr {
 		return rdf_stream.toString();	
 	}
 	
-	/*
-	public static String searchFlickr(String keyword) {
-		try
-		{
-			//set method URL
-			URL url = new URL("http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6d3d002ca456197a60df58cec7a9fadb&text=" +
-					URLEncoder.encode(keyword, "UTF-8") );
-			URLConnection urlc = url.openConnection();
-			urlc.setDoOutput(true);
-			urlc.setAllowUserInteraction(false);
-	                     		
-			//String return
-			BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
-
-			StringBuffer sb = new StringBuffer();
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				sb.append(line+"\n");
-			}
-			br.close();
-			return sb.toString();
-			
-		  }
-		catch(Exception e) {
-	        e.printStackTrace();
-	        return null;
-		}
-
-	  }
-     */
 }

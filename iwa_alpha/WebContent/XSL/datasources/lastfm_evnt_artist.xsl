@@ -28,7 +28,7 @@
 
 <xsl:template match="lfm/events">
 	<xsl:for-each select="event">
-     <m:Consert>
+     <m:Concert>
 	   <dc:title><xsl:value-of select="title"/></dc:title>
 	   <dc:date><xsl:value-of select="startDate"/></dc:date>
 	   <vCard:URL rdf:resource="{url}"/>
@@ -37,16 +37,12 @@
       </xsl:if>
       <xsl:if test="artists/artist">
        <xsl:for-each select="artists/artist">  
-            <m:Artist>
-             <foaf:name><xsl:value-of select="."/></foaf:name> 
-            </m:Artist>        
+            <m:Artist foaf:name="{.}"/>     
           </xsl:for-each>  
       </xsl:if>
      <xsl:if test="artists/headliner">
        <xsl:for-each select="artists/headliner">  
-            <m:Artist>
-             <foaf:name><xsl:value-of select="."/></foaf:name> 
-            </m:Artist>    
+          <m:Artist foaf:name="{.}"/>  
        </xsl:for-each>  
       </xsl:if>
       <m:venue>
@@ -67,7 +63,7 @@
         </geo:point>           
       </m:Venue>
       </m:venue>
-     </m:Consert>
+     </m:Concert>
    </xsl:for-each>    
  </xsl:template>
 </xsl:stylesheet>
