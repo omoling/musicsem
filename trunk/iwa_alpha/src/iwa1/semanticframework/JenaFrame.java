@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 
 
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,6 +29,7 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.vocabulary.*;
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ReasonerRegistry;
@@ -46,15 +48,16 @@ public class JenaFrame {
 	{
 	 FileInputStream inputStream = null;	
 	 //Import DBpedia Ontology
-	 try {	
+	 try 
+	 {	
 	    inputStream = new FileInputStream("/Users/"+System.getProperty("user.name")+"/Documents/workspace/iwa_alpha/WebContent/WEB-INF/lib/Ontologies/dbpedia_3.4.owl");
 	  }
 	 catch (FileNotFoundException e)
 	  {
-		
+		 e.printStackTrace();
 	  }
 	 //load the ontology into the model
-	 model.read(inputStream, null);
+	 //model.read(inputStream, null);
 
 		
 	}
@@ -99,7 +102,10 @@ public class JenaFrame {
 		 infModel.write(out,"RDF/XML");
 	     out.close();
 		}
-		catch (Exception e) {}
+		catch (Exception e) 
+		{
+			 e.printStackTrace();
+		}
 	}
 	
 	

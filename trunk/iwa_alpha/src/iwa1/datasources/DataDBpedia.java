@@ -68,7 +68,7 @@ public class DataDBpedia {
 		    try {
 		    	
 	            ResultSet results = qexec.execSelect();
-	            ResultSetFormatter.asRDF(JenaFrame.model, results);
+	            ResultSetFormatter.asRDF(JenaFrame.dbmodel, results);
 	            //String xml = ResultSetFormatter.asXMLString( results );
 	            //return xml;        
 	            
