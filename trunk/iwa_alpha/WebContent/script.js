@@ -447,16 +447,46 @@ function previousImage(){
 
 function nextImage(){
 	isloading('image');
-	var testurl = "http://farm3.static.flickr.com/2603/4048205561_d7d39c82fe.jpg";
-	var image = document.getElementById("currentimage");
-	var link = document.getElementById("imagelink");
-	var title = document.getElementById("imagetitle");
-	image.src = testurl;
-	image.alt = "test";
-	link.href = testurl;
-	title.innerHTML = "new title";
+	
+	//test image
+	var nextimage = new image("http://farm3.static.flickr.com/2603/4048205561_d7d39c82fe.jpg","test",100,100,"new title");
+
+	var image_element = document.getElementById("currentimage");
+	var link_element = document.getElementById("imagelink");
+	var title_element = document.getElementById("imagetitle");
+	image_element.src = nextimage.src;
+	image_element.alt = nextimage.alt;
+	link_element.href = nextimage.src;
+	title_element.innerHTML = nextimage.title;
 	loaded('image');
 }
+
+
+
+//***************************************************************
+// OBJECTS
+
+function testObjects(){
+	var myobject = new image("src");
+	alert(myobject.src);
+}
+
+function image(src,alt,width,height,title){
+	this.src = src;
+	this.alt = alt;
+	this.width = width;
+	this.height = height;
+	this.title = title;
+}
+
+function video(id){
+	this.id = id;
+}
+
+function marker(marker){
+	this.marker = marker;
+}
+
 
 //***************************************************************
 //Testing functions
