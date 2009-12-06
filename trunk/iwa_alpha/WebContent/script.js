@@ -1,14 +1,25 @@
-//global vars
+//GLOBAL VARS
+//max z-index
 var _zIndex = 0;
+//google map
 var map;
+//google map central marker
 var centerMarker;
 
 //current content in containers
 var current_artist;
 var current_event;
 var current_map_center;
+
+//VIDEO
 var current_video_id;
-var current_image_url;
+var video_array = new Array();
+var video_array_pos = -1;
+
+//IMAGES
+var current_image;
+var image_array = new Array();
+var image_array_pos = -1;
 
 function initializePage(){
 
@@ -20,6 +31,22 @@ function initializePage(){
 
 	//Google Maps
 	initializeMap();
+	
+	//initialize 2 test images
+	var testimg1 = new image("http://farm4.static.flickr.com/3630/3681432106_a0366e4674.jpg","test1",100,100,"1 title");
+	var testimg2 = new image("http://farm3.static.flickr.com/2603/4048205561_d7d39c82fe.jpg","test2",100,100,"2 title");
+	image_array[0] = testimg1;
+	image_array[1] = testimg2;
+	image_array_pos = 0;
+	loadImage(image_array_pos);
+	
+	//initialize 2 test video
+	var testvideo1 = new video("u1zgFlCw8Aw");
+	var testvideo2 = new video("4s_CXOOgidA");
+	video_array[0] = testvideo1;
+	video_array[1] = testvideo2;
+	video_array_pos = 0;
+	loadVideo(video_array_pos);
 }
 
 function positionContainers(){
@@ -139,7 +166,7 @@ function contentHandler(xml){
 
 	//update containers
 	//TODO: update all containers
-	updateContainer('artist', fragment);
+	updateContent('artist', fragment);
 
 }
 
@@ -175,7 +202,7 @@ function loadXSL(filename)
 	 */
 }
 
-function updateContainer(id, newContent){
+function updateContent(id, newContent){
 	document.getElementById(id).innerHTML = "";
 	document.getElementById(id).appendChild(newContent);
 	loaded(id);
@@ -310,7 +337,8 @@ function loadNewVideo(id, startSeconds) {
 	if (ytplayer) {
 		ytplayer.loadVideoById(id, parseInt(startSeconds));
 	}
-	document.getElementById("videoid").value = id;
+	
+	//document.getElementById("videoid").value = id;
 }
 
 function cueNewVideo(id, startSeconds) {
@@ -434,34 +462,127 @@ function eventsInArea(){
 	alert(bounds.toUrlValue());
 }
 
+//VIDEO FUNCTIONS
+function loadVideo(pos){
+	if(pos >= video_array.length){
+		if(video_array.length > 0){
+			pos = 0;
+		} else {
+			//no image
+			pos = -1;
+		}
+	}
+	if (pos >= 0){
+		var videotoload = video_array[pos];
+		alert(videotoload.id);
+		loadNewVideo(videotoload.id, 0);
+	} else {
+		alert("no video!!");
+	}
+}
+
+function getNextVideoPos(){
+	video_array_pos++;
+	//check to loop forward
+	if(video_array_pos >= video_array.length){
+		video_array_pos = 0;
+	}
+	return video_array_pos;
+}
+
+function getPrevVideoPos(){
+	video_array_pos--;
+	//check to loop backwards
+	if(video_array_pos < 0){
+		video_array_pos = video_array.length - 1;
+	}
+	return video_array_pos;
+}
+
+function nextVideo(){
+	isloading('video');
+	loadVideo(getNextVideoPos());
+	loaded('video');
+}
+
+function previousVideo(){
+	isloading('image');
+	loadVideo(getPrevVideoPos());
+	loaded('image');
+}
+
+//IMAGES FUNCTIONS
 function resizeImage(w, h){
 	var holder = document.getElementById("image-holder");
 	holder.style.width=w+"px";
 	holder.style.height=h+"px";
 }
 
+function loadImage(pos) {
+	if(pos >= image_array.length){
+		if(image_array.length > 0){
+			pos = 0;
+		} else {
+			//no image
+			pos = -1;
+		}
+	}
+	var image_element = document.getElementById("currentimage");
+	var link_element = document.getElementById("imagelink");
+	var title_element = document.getElementById("imagetitle");
+	var position_element = document.getElementById("imageposition");
+	var total_element = document.getElementById("imagetotal");
+	if (pos >= 0){
+		var imagetoload = image_array[pos];
+		image_element.src = imagetoload.src;
+		image_element.alt = imagetoload.alt;
+		link_element.href = imagetoload.src;
+		title_element.innerHTML = imagetoload.title;
+		position_element.innerHTML = pos+1 + " / ";
+		total_element.innerHTML = image_array.length;
+	} else {
+		image_element.src = "";
+		image_element.alt = "no image";
+		link_element.href = "javascript:void(0);";
+		title_element.innerHTML = "no image";
+		position_element.innerHTML = "0 / ";
+		total_element.innerHTML = "0";
+	}
+}
+
+function getNextImgPos(){
+	image_array_pos++;
+	//check to loop forward
+	if(image_array_pos >= image_array.length){
+		image_array_pos = 0;
+	}
+	return image_array_pos;
+}
+
+function getPrevImgPos(){
+	image_array_pos--;
+	//check to loop backwards
+	if(image_array_pos < 0){
+		image_array_pos = image_array.length - 1;
+	}
+	return image_array_pos;
+}
+
 function previousImage(){
-	
-	alert("nothing yet!");
+	isloading('image');
+	loadImage(getPrevImgPos());
+	loaded('image');
 }
 
 function nextImage(){
 	isloading('image');
-	
-	//test image
-	var nextimage = new image("http://farm3.static.flickr.com/2603/4048205561_d7d39c82fe.jpg","test",100,100,"new title");
-
-	var image_element = document.getElementById("currentimage");
-	var link_element = document.getElementById("imagelink");
-	var title_element = document.getElementById("imagetitle");
-	image_element.src = nextimage.src;
-	image_element.alt = nextimage.alt;
-	link_element.href = nextimage.src;
-	title_element.innerHTML = nextimage.title;
+	loadImage(getNextImgPos());
 	loaded('image');
 }
 
-
+function preventReloading(){
+	alert("You are going to reload every content!");
+}
 
 //***************************************************************
 // OBJECTS
@@ -494,7 +615,7 @@ function marker(marker){
 function testXslLoading(){
 	alert("going to try");
 	var xsl = loadXSL("test.xsl");
-	updateContainer("artist", xsl);
+	updateContent("artist", xsl);
 	alert("done?");
 	alert(xsl);
 }
