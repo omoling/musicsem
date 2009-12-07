@@ -134,6 +134,7 @@
 </form>		
 <br /><br />
 <input type="button" onclick="ajaxSearch();" value="Search" />
+<input type="button" onclick="ajaxGetArtist();" value="Search Artist" />
 <input type="button" onclick="isloading('event');" value="TestLoading" />
 <input type="button" onclick="loaded('event');" value="TestLoaded" />
 <input type="button" onclick="testXslLoading();" value="TestXslLoading" />
@@ -179,7 +180,16 @@
 					<span>Headliner</span><br />
 					<span><a href="website" target="_blank">Website</a></span>
 				</li>
-				<li class="eventlist">b</li>
+				<li class="eventlist">
+					<strong><span>Event title</span> - 
+					<span>Start date</span><br /></strong>
+					<span>Description description description description</span><br />
+					<span>Venue</span> - 
+					<span><a href="javascript:void(0);" onclick="updateMap(40.2, 40.2, 'Venue address');">Venue address</a></span>
+					<span><a href="javascript:void(0);" onclick="newArtist(U2');">Artist</a></span><br />
+					<span>Headliner</span><br />
+					<span><a href="website" target="_blank">Website</a></span>
+				</li>
 			</ul>
 		</div>
 	</div>
@@ -196,12 +206,6 @@
 		<div id="map_canvas" class="content-inside" 
 			onmousedown="$(function() { $('#map-container').draggable('disable'); });">
 		</div>
-		<!--
-		<div id="map-bottom" class="bottombar" 
-			onmousedown="$(function() { $('#map-container').draggable('disable'); });">
-			Play 
-		</div>
-		-->
 		<div id="map-bottom" class="bottombar" >
 			<input type="button" onclick="eventsInArea();" value="Events today in the area" />
 		</div>
@@ -226,6 +230,9 @@
 				<a href="javascript:void(0);" onclick="pause();">Pause</a>
 				<a href="javascript:void(0);" onclick="stop();">Stop</a>
         	</div>
+        	<div style="float:left; padding-left:5px;">
+				<span id="videoposition"></span><span id="videototal"></span>
+			</div>
         	<div style="float:right;">
 				<a href="javascript:void(0);" onclick="previousVideo();" >previous</a> | 
 				<a href="javascript:void(0);" onclick="nextVideo();" >next</a>
