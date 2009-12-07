@@ -1,5 +1,7 @@
 package iwa1.datasources;
 
+import iwa1.semanticframework.JenaFrame;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 
@@ -74,18 +76,21 @@ public class DataYouTube {
 		query.setSafeSearch(YouTubeQuery.SafeSearch.NONE);
 		
 		VideoFeed videoFeed = service.query(query, VideoFeed.class);
+		//Read videos
 		if(videoFeed.getTotalResults()!=0)
 		 {	
 			init_model();
 			 for( VideoEntry video : videoFeed.getEntries())
 			 {
-			    YouTubeMediaGroup mediaGroup = video.getMediaGroup(); 
-				String video_id = mediaGroup.getVideoId();
-				String title = video.getTitle().getPlainText();
-				long duration = mediaGroup.getDuration();
-				addVideo(video_id,title,""+duration);
-				
-				
+				if(video.isEmbeddable()==true)
+				{	
+			     YouTubeMediaGroup mediaGroup = video.getMediaGroup(); 
+				 String video_id = mediaGroup.getVideoId();
+			     String title = video.getTitle().getPlainText();
+				 long duration = mediaGroup.getDuration();
+				 //Add video to mdoel
+				 addVideo(video_id,title,""+duration);
+				}
 			 }
 		 }	
 		}
@@ -134,8 +139,7 @@ public class DataYouTube {
 	  video.addProperty(title,video_title);
 	  video.addProperty(duration,""+video_duration);
 	  video.addProperty(depicts,res);
-	  
-	  
+		  
 	}
 	
 	
@@ -144,6 +148,15 @@ public class DataYouTube {
 		ByteArrayOutputStream rdf_stream= new ByteArrayOutputStream();
 		youtube_model.write(rdf_stream);
 		return rdf_stream.toString();	
+	}
+	
+	public static void addNflush()
+	{
+		//Add flickr model to applications main model and clear data
+		JenaFrame.model.add(youtube_model);
+		//clear data
+		youtube_model.removeAll();
+		youtube_model.close();
 	}
 
 }

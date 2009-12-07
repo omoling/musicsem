@@ -1,6 +1,7 @@
 package iwa1.servlets;
 
-import  iwa1.datasources.*;
+import  iwa1.datasources.*
+;
 
 import iwa1.semanticframework.*;
 
@@ -38,8 +39,8 @@ public class MainServlet extends HttpServlet {
 	 	//Make requests to datasources
  		//Query DBpedia
  		//String dbpedia_res = DataDBpedia.query_dbpedia(keyword);
-		//DataDBpedia.query_dbpedia(keyword);
-		
+		DataDBpedia.query_dbpedia(keyword);
+		String dbpedia_rdf = DataDBpedia.show_model();
 		
 		
  		//Last.fm
@@ -48,26 +49,25 @@ public class MainServlet extends HttpServlet {
  		
  		//Events by location
  		//String lastfm_res= DataLastFm.lastfm("geo.getEvents","location","Amsterdam");
- 		
- 		//Forward XML result to RdfProducer (XSLT)
- 		//TODO: relative path??
-		//String xsl_source = getServletContext().getResource("/WEB-INF/test.xsl").toString();
-		//String xsl_source = "/Users/"+System.getProperty("user.name")+"/Documents/workspace/iwa_alpha/WebContent/XSL/datasources/lastfm_evnt_artist.xsl";
-		//String lastfm_rdf = RdfProducer.XmlToRdf(lastfm_res, xsl_source);
+		
+         /*
+		 if(lastfm_res!=null)
+		 { 
+			
+		 //Import to model	 
+		 //DataLastFm.addToModel(lastfm_res);	 
+		  	 
+		 }	 
+		 */
 		 
  		//YouTube
- 		DataYouTube.search_youtube(keyword);
- 		String youtube_rdf = DataYouTube.show_model();
+ 		//DataYouTube.search_youtube(keyword);
+ 		//String youtube_rdf = DataYouTube.show_model();
 		
  		//Flickr
- 		DataFlickr.searchPhotos(keyword);
- 		String flickr_model = DataFlickr.show_model();
-
- 		
-		//Import RDF/XML to model
-		
-		//Lastfm import
-		//JenaFrame.import_rdf(lastfm_rdf);
+ 		//DataFlickr.searchPhotos(keyword);
+ 		//String flickr_model = DataFlickr.show_model();
+ 
 		
 		//Flickr import
 		//JenaFrame.model.add(DataFlickr.flickr_model);
@@ -81,14 +81,12 @@ public class MainServlet extends HttpServlet {
 		 //Query local model
 		 //String local_res = JenaFrame.query_model();
 		 
-		//Export to file
-		//JenaFrame.export_infModel();
+
+
 		//Response
 		response.setContentType("text/xml;charset=utf-8");
-		out.print(flickr_model);
-		
-		
-	  
+		out.print(dbpedia_rdf);
+			  
 	}
 
 	/**

@@ -1,9 +1,7 @@
 package iwa1.datasources;
 
-
+import iwa1.semanticframework.*;
 import java.io.BufferedReader;
-
-
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -41,5 +39,17 @@ public class DataLastFm {
 	}
 
   }
+	
+	
+	//Import to application main model
+	public static void addToModel(String lastfm_xml)
+	{
+	  //Perfoms the XSL Transformation to RDF/XML using the RdfProducer class	
+	  String xsl_source = "/Users/"+System.getProperty("user.name")+"/Documents/workspace/iwa_alpha/WebContent/XSL/datasources/lastfm_evnt_artist.xsl";
+	  String lastfm_rdf = RdfProducer.XmlToRdf(lastfm_xml, xsl_source);
+	  //Import to model
+	  JenaFrame.import_rdf(lastfm_rdf);
+	  	
+	}
 	
 }
