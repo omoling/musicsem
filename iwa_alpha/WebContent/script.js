@@ -109,44 +109,22 @@ function getXMLObject()  //XML OBJECT
 var xmlhttp = new getXMLObject();
 
 function ajaxSearch() {
-	
-	//TODO: call each content request function
-	alert("not impelmented");
-	
-	/*
-	//put containers in loading state
-	//containersLoading();
-	
-	if(xmlhttp) { 
+	containersLoading();
+	if(xmlhttp){
 		var searchString = document.getElementById("search").value;
-		xmlhttp.open("GET","MainServlet?search=" + searchString, true);
-		xmlhttp.onreadystatechange = handleServerResponse;
-		//xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.open("GET","MainServlet?type=artist&search="+searchString, true);
+		xmlhttp.onreadystatechange = handleSearchResponse;
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xmlhttp.send(null);
 	} else {
 		alert("AJAX error!");
-		//containersLoaded();  
 	}
-	*/
 }
 
-function ajaxGetArtist(){
+function ajaxEvents(location) {
 	if(xmlhttp){
-		var searchString = document.getElementById("search").value;
-		xmlhttp.open("GET","MainServlet", true);
-		xmlhttp.onreadystatechange = handleArtistResponse;
-		/*
-		xmlhttp.onreadystatechange = function(){
-			if (xmlhttp.readyState == 4) {
-				if(xmlhttp.status == 200) {
-					handleArtistResponse(xmlhttp.responseText);
-				}
-				else {
-					alert("Error during AJAX call. Please try again");
-				}
-			}
-		};
-		*/
+		xmlhttp.open("GET","MainServlet?type=eventsnearby&search="+location, true);
+		xmlhttp.onreadystatechange = handleEventsResponse;
 		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xmlhttp.send(null);
 	} else {
@@ -159,42 +137,57 @@ function loadXSL(filename){
 	var xmlhttp = getXMLObject();
 	xmlhttp.open("GET", "http://localhost:8080/iwa_alpha/XSL/client/"+filename, false);
 	xmlhttp.send(null);
+	//alert(xmlhttp.responseText);
 	var xsl = xmlhttp.responseXML;
 	return xsl;
 }
 
-function handleArtistResponse(){
+function handleEventsResponse(){
 	if (xmlhttp.readyState == 4) {
 		if(xmlhttp.status == 200) {
+			//alert(xmlhttp.responseText);
+		}
+	}
+}
+
+function handleSearchResponse(){
+	if (xmlhttp.readyState == 4) {
+		if(xmlhttp.status == 200) {
+			
+			//TODO: parse response for each container, check for artist-events status
 			//get XSL
 			var xsl = loadXSL(xsl_artist);
+			var parsedContent = "";
 			
-			//TODO:parse etc
-			//updateContent("artist-content", xmlhttp.responseXML);
-			
-			updateContent("artist-content", xmlhttp.responseXML);
+			/*// code for IE
+			if (window.ActiveXObject)
+			{
+				parsedContent = xml.transformNode(xsl);
+				ex=xml.transformNode(xsl);
+				document.getElementById("example").innerHTML=ex;
+			}
+			// code for Mozilla, Firefox, Opera, etc.
+			else*/ if (document.implementation && document.implementation.createDocument)
+			{
+				var xsltProcessor = new XSLTProcessor();
+				xsltProcessor.importStylesheet(xsl);
+				var xmlRef = document.implementation.createDocument("", "", null);
+				
+				result = xsltProcessor.transformToFragment(xmlhttp.responseXML, document);
+				parsedContent = result;
+				updateContent('artist-content', parsedContent);
+			} else {
+				alert("Error during XSL transformation (are you using Firefox? You should..)");
+			}
 		}
 		else {
-			alert("Error during AJAX call. Please try again");
+			alert("Error during AJAX call. Please try again. (" + xmlhttp.status + ")");
 		}
 	}
+	containersLoaded();
 }
 
-/*
-function handleServerResponse() {
-	if (xmlhttp.readyState == 4) {
-		if(xmlhttp.status == 200) {
-			//call content dispatcher
-			contentHandler(xmlHttp.responseXml);
-			
-		}
-		else {
-			alert("Error during AJAX call. Please try again");
-		}
-	}
-}
-*/
-
+//TODO: check if needed!!
 function contentHandler(xml){
 
 	//load XSL
@@ -236,9 +229,9 @@ function contentHandler(xml){
 }
 
 function updateContent(id, newContent){
-	//document.getElementById(id).innerHTML = "";
-	//document.getElementById(id).appendChild(newContent);
-	document.getElementById(id).innerHTML = newContent;
+	document.getElementById(id).innerHTML = "";
+	document.getElementById(id).appendChild(newContent);
+	//document.getElementById(id).innerHTML = newContent;
 	loaded(id);
 }
 
@@ -486,13 +479,33 @@ function increaseZ(id){
 
 
 function eventsInArea(){
-	var bounds = map.getBounds();
-	var sw = bounds.getSouthWest();
-	var ne = bounds.getNorthEast();
-	//alert(sw.lat() + " " + sw.lng() + " " + ne.lat() + " " + ne.lng());
+	
+	//get name from reverse-geocoding
+	var geocoder = new google.maps.Geocoder();
+	var center = map.getCenter();
+	var location = "";
+	
+	if (geocoder) {
+	      geocoder.geocode({'latLng': center}, function(results, status) {
+	        if (status == google.maps.GeocoderStatus.OK) {
+	          if (results[1]) {
+	        	  for(i=0; i < results[1].address_components.length; i++)
+	        	  {
+	        		  if(results[1].address_components[i].types.indexOf("locality") >= 0){
+	        			  location = results[1].address_components[i].long_name;
+	        			  break;
+	        		  }
+	        	  }
+	        	  ajaxEvents(location);
+	            } else {
+	            	alert("Could not find the location!");
+	            }
+	          } else {
+	            alert("Geocoder failed due to: " + status);
+	          }
+	      });
+	}
 
-	//lat SW, lng SW, lat NE, lng NE
-	alert(bounds.toUrlValue());
 }
 
 //VIDEO FUNCTIONS
