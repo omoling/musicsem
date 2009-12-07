@@ -39,17 +39,15 @@ public class DataLastFm {
 	}
 
   }
-	
-	
-	//Import to application main model
-	public static void addToModel(String lastfm_xml)
+
+	public static String Lastfm_rdf (String lastfm_xml)
 	{
-	  //Perfoms the XSL Transformation to RDF/XML using the RdfProducer class	
-	  String xsl_source = "/Users/"+System.getProperty("user.name")+"/Documents/workspace/iwa_alpha/WebContent/XSL/datasources/lastfm_evnt_artist.xsl";
-	  String lastfm_rdf = RdfProducer.XmlToRdf(lastfm_xml, xsl_source);
-	  //Import to model
-	  JenaFrame.import_rdf(lastfm_rdf);
-	  	
+		  //Perfoms the XSL Transformation to RDF/XML using the RdfProducer class	
+		  String xsl_source = "/Users/"+System.getProperty("user.name")+"/Documents/workspace/iwa_alpha/WebContent/XSL/datasources/lastfm_evnt_artist.xsl";
+		  String lastfm_rdf = RdfProducer.XmlToRdf(lastfm_xml, xsl_source);	
+		  return lastfm_rdf;
 	}
+	
+
 	
 }
