@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 
 
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,8 +41,8 @@ import com.hp.hpl.jena.util.FileManager;
 
 
 public class JenaFrame {
-	public static Model model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF);
-	public static Model dbmodel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF);
+	public static OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF);
+	public static OntModel dbmodel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF);
 	public static InfModel infModel = null;
 
 	public static void init()
@@ -56,8 +57,8 @@ public class JenaFrame {
 	  {
 		 e.printStackTrace();
 	  }
-	 //load the ontology into the model
-	 //model.read(inputStream, null);
+	 //load the dbpedia ontology into the model
+	 model.read(inputStream, null);
 
 		
 	}
@@ -116,9 +117,7 @@ public class JenaFrame {
 		infModel = ModelFactory.createInfModel(reasoner,dbmodel);	
 		*/
 		
-		
-		
-		
+	
 		String queryString=
 			"PREFIX owl: <http://www.w3.org/2002/07/owl#> "+
             "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
@@ -126,17 +125,28 @@ public class JenaFrame {
             "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "+
             "PREFIX foaf: <http://xmlns.com/foaf/0.1/> "+
             "PREFIX dc: <http://purl.org/dc/elements/1.1/> "+
-            "PREFIX : <http://dbpedia.org/resource/> "+
             "PREFIX dbpedia2: <http://dbpedia.org/property/> "+
             "PREFIX dbpedia-owl: <http://dbpedia.org/ontology/> "+
+            "PREFIX dbpedia: <http://dbpedia.org/resource/> "+
             "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "+
-            "PREFIX j.0: <http://www.w3.org/2001/sw/DataAccess/tests/result-set#> "+
-            "SELECT  ?resource ?property ?hasValue "+
-            "WHERE { "+
-            "?resource rdfs:label ?artistName."+
-            "?resource  ?property ?hasValue."+
-            "FILTER (regex(?artistName, \"Jimmy Page\"))"+
-            "}";
+			"CONSTRUCT { "+ 
+			"?s rdf:type foaf:Agent; "+
+			"foaf:name ?name; "+
+			"dbpedia2:abstract ?abstract; "+
+			"dbpedia2:genre ?genre; "+
+			"dbpedia-owl:thumbnail ?thumbnail; "+
+			"dbpedia2:url ?url.} "+
+			"WHERE { "+
+			"GRAPH ?originGraph{" +
+			"?s a dbpedia-owl:Artist. "+
+			"?s foaf:name ?name. "+
+			"?s dbpedia2:abstract ?abstract. "+
+			"?s  dbpedia2:genre ?genre. "+
+			"?s  dbpedia-owl:thumbnail ?thumbnail. "+
+			"?s  dbpedia2:url ?url. "+
+			"FILTER (regex(?name, \"Moby\")). "+
+			"FILTER langMatches( lang(?abstract), 'en'). "+
+			"}}";
 
 		
 		
@@ -145,9 +155,9 @@ public class JenaFrame {
 		QueryExecution local_exec= QueryExecutionFactory.create(query, JenaFrame.infModel);
 	    try {
 	    	
-            ResultSet results = local_exec.execSelect();
-            String xml = ResultSetFormatter.asXMLString( results );
-            return xml;        
+             ResultSet results = local_exec.execSelect();
+             String xml = ResultSetFormatter.asXMLString( results );
+             return xml;        
             
             } 
           finally 

@@ -1,5 +1,7 @@
 package iwa1.datasources;
 
+import iwa1.semanticframework.JenaFrame;
+
 import java.io.BufferedReader;
 
 
@@ -140,6 +142,15 @@ public class DataFlickr {
 		ByteArrayOutputStream rdf_stream= new ByteArrayOutputStream();
 		flickr_model.write(rdf_stream);
 		return rdf_stream.toString();	
+	}
+	
+	public static void addNflush()
+	{
+		//Add flickr model to applications main model and clear data
+		JenaFrame.model.add(flickr_model);
+		//clear data
+		flickr_model.removeAll();
+		flickr_model.close();
 	}
 	
 }
