@@ -43,11 +43,11 @@ public class DataDBpedia {
 				"dbpedia2:url ?url.} "+
 				"WHERE {" +
 				"GRAPH ?g{ "+
-				"?s a dbpedia-owl:Band. "+
+				"?s a owl:Thing. "+
 				"?s foaf:name ?name. "+
 				"?s dbpedia2:abstract ?abstract. "+
 				"?s  dbpedia-owl:thumbnail ?thumbnail. "+
-				"?s dbpedia2:currentMembers ?currentMembers. "+
+				"OPTIONAL { ?s dbpedia2:currentMembers ?currentMembers }. "+
 				"?s dbpedia2:yearsActive ?yearsActive. "+
 				"?s  dbpedia2:genre ?genre. "+
 				"?s  dbpedia2:url ?url. "+
@@ -93,6 +93,7 @@ public class DataDBpedia {
 		  }
 		 //load the dbpedia ontology into the model
 		 dbpedia_model.read(inputStream, null);
+
 	}
 	
 	

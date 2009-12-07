@@ -39,7 +39,7 @@ public class MainServlet extends HttpServlet {
 	 //Make requests to datasources
  		//Query DBpedia
 		DataDBpedia.query_dbpedia(keyword);
-		//String dbpedia_rdf = DataDBpedia.show_model();
+		String dbpedia_rdf = DataDBpedia.show_model();
 		
  		//Last.fm
 		//Events by artist 
@@ -80,7 +80,7 @@ public class MainServlet extends HttpServlet {
 		 
 		//Response
 		response.setContentType("text/xml;charset=utf-8");
-		out.print(rdf_model);
+		out.print(dbpedia_rdf);
 			  
 	}
 
