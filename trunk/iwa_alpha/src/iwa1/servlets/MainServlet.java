@@ -30,7 +30,22 @@ public class MainServlet extends HttpServlet {
 		// 
 		
 		PrintWriter out = response.getWriter();
+		
+		/**
+		 * artist : overall search
+		 * eventsnearby : ask for events in the area
+		 */
+		String type = request.getParameter("type");
 		String keyword = request.getParameter("search");
+		
+		if (type.equals("eventsnearby")){
+			
+		} else if (type.equals("artist")){
+			
+		} else {
+			//stop
+			return;
+		}
 
 		//TODO: session management
 		 //Initialize Main Model
