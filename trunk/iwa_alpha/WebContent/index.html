@@ -104,12 +104,6 @@
 		$("#test-container").resizable();
 	});
 </script>
-
-<!-- 
-<script type="text/javascript" src="slideitmoo/mootools-1.2.1-core.js"></script>
-<script type="text/javascript" src="slideitmoo/mootools-1.2-more.js"></script>
-<script type="text/javascript" src="slideitmoo/slideitmoo-1.1.js"></script>
--->
  
 <!-- Use the Google AJAX Libraries API:
         http://code.google.com/apis/ajaxlibs/ -->
@@ -127,7 +121,7 @@
 		$('#video-container').draggable('enable');
 	});">
 <div id="page" class="page">
-<form action="MainServlet"  name="keyform"  onsubmit= "return keyNotEmpty()" method="post">
+<form action="MainServlet?type=artist"  name="keyform"  onsubmit= "return keyNotEmpty()" method="post">
 	Artist:
 	<input type="text" id="search" name="search" /><br />
 	<input type="submit" value="Search" /><br />
