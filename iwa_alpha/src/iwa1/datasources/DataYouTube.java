@@ -156,7 +156,7 @@ public class DataYouTube {
 		JenaFrame.model.add(youtube_model);
 		//clear data
 		youtube_model.removeAll();
-		youtube_model.close();
+		//youtube_model.close();
 	}
 
 }

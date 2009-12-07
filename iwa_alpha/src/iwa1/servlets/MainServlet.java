@@ -33,59 +33,54 @@ public class MainServlet extends HttpServlet {
 		String keyword = request.getParameter("search");
 
 		//TODO: session management
-		 //Initialize Model
+		 //Initialize Main Model
 		 JenaFrame.init();
 		
-	 	//Make requests to datasources
+	 //Make requests to datasources
  		//Query DBpedia
- 		//String dbpedia_res = DataDBpedia.query_dbpedia(keyword);
 		DataDBpedia.query_dbpedia(keyword);
-		String dbpedia_rdf = DataDBpedia.show_model();
-		
+		//String dbpedia_rdf = DataDBpedia.show_model();
 		
  		//Last.fm
 		//Events by artist 
- 		//String lastfm_res= DataLastFm.lastfm("artist.getevents","artist",keyword);
+ 		String lastfm_res= DataLastFm.lastfm("artist.getevents","artist",keyword);
  		
  		//Events by location
  		//String lastfm_res= DataLastFm.lastfm("geo.getEvents","location","Amsterdam");
-		
-         /*
-		 if(lastfm_res!=null)
-		 { 
-			
-		 //Import to model	 
-		 //DataLastFm.addToModel(lastfm_res);	 
-		  	 
-		 }	 
-		 */
 		 
  		//YouTube
- 		//DataYouTube.search_youtube(keyword);
+ 		DataYouTube.search_youtube(keyword);
  		//String youtube_rdf = DataYouTube.show_model();
 		
  		//Flickr
- 		//DataFlickr.searchPhotos(keyword);
+ 		DataFlickr.searchPhotos(keyword);
  		//String flickr_model = DataFlickr.show_model();
  
+	//Import data to main model
+ 		//DBpedia import
+ 		DataDBpedia.addNflush();
+ 		
+        //Lastfm
+		 if(lastfm_res!=null)
+		 { 
+		  DataLastFm.addToModel(lastfm_res);	  	 
+		 }	 
 		
 		//Flickr import
-		//JenaFrame.model.add(DataFlickr.flickr_model);
+		DataFlickr.addNflush();
+		
+		//YouTube import
+		DataYouTube.addNflush();
 		
 		//Show model
-		//String rdf_model=JenaFrame.show_model();
-		//Show infModel
-		//String rdf_infModel=JenaFrame.show_infModel();
-		
+		String rdf_model=JenaFrame.show_model();
 		
 		 //Query local model
 		 //String local_res = JenaFrame.query_model();
 		 
-
-
 		//Response
 		response.setContentType("text/xml;charset=utf-8");
-		out.print(dbpedia_rdf);
+		out.print(rdf_model);
 			  
 	}
 
@@ -95,8 +90,6 @@ public class MainServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 
 		doGet(request, response);
-		
-		
 	}
 
 }

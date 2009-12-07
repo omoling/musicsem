@@ -43,7 +43,7 @@ import com.hp.hpl.jena.util.FileManager;
 public class JenaFrame {
 	public static OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF);
 	public static OntModel dbmodel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF);
-	public static InfModel infModel = null;
+	//public static InfModel infModel = null;
 
 	public static void init()
 	{
@@ -60,7 +60,7 @@ public class JenaFrame {
 	 //load the dbpedia ontology into the model
 	 model.read(inputStream, null);
 
-		
+	 
 	}
 	
 	public static void import_rdf(String rdf_data)
@@ -80,6 +80,7 @@ public class JenaFrame {
 	
 	}
 	
+	/*
 	public static String show_infModel()
 	{
 		Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
@@ -91,6 +92,7 @@ public class JenaFrame {
 	
 	}
 
+	
 	public static void export_infModel()
 	{
 		try
@@ -108,7 +110,7 @@ public class JenaFrame {
 			 e.printStackTrace();
 		}
 	}
-	
+*/	
 	
 	public static String query_model() {
 		/*
@@ -152,7 +154,7 @@ public class JenaFrame {
 		
 		Query query = QueryFactory.create(queryString);
 		//Query local model
-		QueryExecution local_exec= QueryExecutionFactory.create(query, JenaFrame.infModel);
+		QueryExecution local_exec= QueryExecutionFactory.create(query, JenaFrame.model);
 	    try {
 	    	
              ResultSet results = local_exec.execSelect();

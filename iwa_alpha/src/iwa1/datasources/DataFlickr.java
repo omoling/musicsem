@@ -150,7 +150,6 @@ public class DataFlickr {
 		JenaFrame.model.add(flickr_model);
 		//clear data
 		flickr_model.removeAll();
-		flickr_model.close();
 	}
 	
 }
