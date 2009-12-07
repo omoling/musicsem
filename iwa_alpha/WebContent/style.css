@@ -54,7 +54,7 @@ div.content-inside {
 	height: 283px;
 	position: relative;
 	background: #6BF;
-	overflow: hidden;
+	overflow: auto;
 	text-align: left;
 }
 

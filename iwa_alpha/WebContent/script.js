@@ -11,6 +11,12 @@ var current_artist;
 var current_event;
 var current_map_center;
 
+//XSL FILENAMES
+var xsl_artist = "artist.xsl";
+var xsl_event = "event.xsl";
+var xsl_image = "image.xsl";
+var xsl_video = "video.xsl";
+
 //VIDEO
 var current_video_id;
 var video_array = new Array();
@@ -42,7 +48,7 @@ function initializePage(){
 	
 	//initialize 2 test video
 	var testvideo1 = new video("u1zgFlCw8Aw");
-	var testvideo2 = new video("4s_CXOOgidA");
+	var testvideo2 = new video("uDkBzkA9L4s");
 	video_array[0] = testvideo1;
 	video_array[1] = testvideo2;
 	video_array_pos = 0;
@@ -100,35 +106,94 @@ function getXMLObject()  //XML OBJECT
 	return xmlHttp;  // Mandatory Statement returning the ajax object created
 }
 
-var xmlhttp = new getXMLObject();	//xmlhttp holds the ajax object
+var xmlhttp = new getXMLObject();
 
 function ajaxSearch() {
+	
+	//TODO: call each content request function
+	alert("not impelmented");
+	
+	/*
 	//put containers in loading state
-	containersLoading();
-
+	//containersLoading();
+	
 	if(xmlhttp) { 
 		var searchString = document.getElementById("search").value;
 		xmlhttp.open("GET","MainServlet?search=" + searchString, true);
-		xmlhttp.onreadystatechange  = handleServerResponse;
+		xmlhttp.onreadystatechange = handleServerResponse;
+		//xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.send(null);
+	} else {
+		alert("AJAX error!");
+		//containersLoaded();  
+	}
+	*/
+}
+
+function ajaxGetArtist(){
+	if(xmlhttp){
+		var searchString = document.getElementById("search").value;
+		xmlhttp.open("GET","MainServlet", true);
+		xmlhttp.onreadystatechange = handleArtistResponse;
+		/*
+		xmlhttp.onreadystatechange = function(){
+			if (xmlhttp.readyState == 4) {
+				if(xmlhttp.status == 200) {
+					handleArtistResponse(xmlhttp.responseText);
+				}
+				else {
+					alert("Error during AJAX call. Please try again");
+				}
+			}
+		};
+		*/
 		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xmlhttp.send(null);
 	} else {
 		alert("AJAX error!");
-		containersLoaded();  
 	}
 }
 
+function loadXSL(filename){
+	// Load the xsl file using synchronous XMLHttpRequest
+	var xmlhttp = getXMLObject();
+	xmlhttp.open("GET", "http://localhost:8080/iwa_alpha/XSL/client/"+filename, false);
+	xmlhttp.send(null);
+	var xsl = xmlhttp.responseXML;
+	return xsl;
+}
+
+function handleArtistResponse(){
+	if (xmlhttp.readyState == 4) {
+		if(xmlhttp.status == 200) {
+			//get XSL
+			var xsl = loadXSL(xsl_artist);
+			
+			//TODO:parse etc
+			//updateContent("artist-content", xmlhttp.responseXML);
+			
+			updateContent("artist-content", xmlhttp.responseXML);
+		}
+		else {
+			alert("Error during AJAX call. Please try again");
+		}
+	}
+}
+
+/*
 function handleServerResponse() {
 	if (xmlhttp.readyState == 4) {
 		if(xmlhttp.status == 200) {
 			//call content dispatcher
 			contentHandler(xmlHttp.responseXml);
+			
 		}
 		else {
-			//alert("Error during AJAX call. Please try again");
+			alert("Error during AJAX call. Please try again");
 		}
 	}
 }
+*/
 
 function contentHandler(xml){
 
@@ -170,41 +235,10 @@ function contentHandler(xml){
 
 }
 
-function loadXSL(filename)
-{
-	// Load the xsl file using synchronous XMLHttpRequest
-	var myXMLHTTPRequest = getXMLObject();
-	myXMLHTTPRequest.open("GET", "http://localhost:8080/iwa_alpha/XSL/"+filename, false);
-	myXMLHTTPRequest.send(null);
-	var xsl = myXMLHTTPRequest.responseXML;
-	return xsl;
-	/*
-	var xmlDoc;
-	// code for IE
-	if (window.ActiveXObject)
-	{
-		xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
-	}
-	// code for Mozilla, Firefox, Opera, etc.
-	else if (document.implementation
-			&& document.implementation.createDocument)
-	{
-		xmlDoc=document.implementation.createDocument("","",null);
-	}
-	else
-	{
-		alert('Your browser cannot handle this script');
-	}
-	xmlDoc.async=false;
-	xmlDoc.load("http://localhost:8080/iwa_alpha/XSL/" + filename);
-	//xmlDoc.load("/iwa_alpha/XSL/" + filename);
-	return(xmlDoc);
-	 */
-}
-
 function updateContent(id, newContent){
-	document.getElementById(id).innerHTML = "";
-	document.getElementById(id).appendChild(newContent);
+	//document.getElementById(id).innerHTML = "";
+	//document.getElementById(id).appendChild(newContent);
+	document.getElementById(id).innerHTML = newContent;
 	loaded(id);
 }
 
@@ -246,19 +280,18 @@ function initializeMap() {
 }
 
 function updateMap(lat, lng, title){
+	isloading('map');
 	//set new center
 	var newCenter = new google.maps.LatLng(parseInt(lat),parseInt(lng));
 	map.setCenter(newCenter);
 	//set new center marker
-	if(null == centerMarker) {
-		centerMarker = new google.maps.Marker({
-	     		position: newCenter, 
-	      		map: map,
-	      		title: title
-			}); 
-	} else {
-		centerMarker.position = newCenter;
-	}
+	centerMarker = null;
+	centerMarker = new google.maps.Marker({
+     		position: newCenter, 
+      		map: map,
+      		title: title
+		});
+	loaded('map');
 }
 
 function newArtist(name){
@@ -474,10 +507,14 @@ function loadVideo(pos){
 	}
 	if (pos >= 0){
 		var videotoload = video_array[pos];
-		alert(videotoload.id);
 		loadNewVideo(videotoload.id, 0);
+		var position_element = document.getElementById("videoposition");
+		var total_element = document.getElementById("videototal");
+		position_element.innerHTML = pos+1 + " / ";
+		total_element.innerHTML = video_array.length;
 	} else {
-		alert("no video!!");
+		position_element.innerHTML = "0 / ";
+		total_element.innerHTML = "0 [no video]";
 	}
 }
 
@@ -613,10 +650,9 @@ function marker(marker){
 //Testing functions
 
 function testXslLoading(){
-	alert("going to try");
+	//alert("going to try");
 	var xsl = loadXSL("test.xsl");
 	updateContent("artist", xsl);
 	alert("done?");
-	alert(xsl);
 }
 
