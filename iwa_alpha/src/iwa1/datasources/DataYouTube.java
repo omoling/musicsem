@@ -116,6 +116,7 @@ public class DataYouTube {
 	 //Load Image Ontology
 	 youtube_model.read(imgOntURL);
 	 
+	 
 	 //Set Properties
 	 name = youtube_model.getProperty(FOAF.getURI(), "name");
 	 title = youtube_model.getProperty(DC.getURI(),"title");
