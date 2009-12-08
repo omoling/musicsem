@@ -38,14 +38,6 @@ function initializePage(){
 	//Google Maps
 	initializeMap();
 	
-	//initialize 2 test images
-	var testimg1 = new image("http://farm4.static.flickr.com/3630/3681432106_a0366e4674.jpg","test1",100,100,"1 title");
-	var testimg2 = new image("http://farm3.static.flickr.com/2603/4048205561_d7d39c82fe.jpg","test2",100,100,"2 title");
-	image_array[0] = testimg1;
-	image_array[1] = testimg2;
-	image_array_pos = 0;
-	loadImage(image_array_pos);
-	
 	//initialize 2 test video
 	var testvideo1 = new video("u1zgFlCw8Aw");
 	var testvideo2 = new video("uDkBzkA9L4s");
@@ -146,6 +138,7 @@ function handleEventsResponse(){
 	if (xmlhttp.readyState == 4) {
 		if(xmlhttp.status == 200) {
 			//alert(xmlhttp.responseText);
+			updateContent('page', xmlhttp.responseText);
 		}
 	}
 }
@@ -154,10 +147,10 @@ function handleSearchResponse(){
 	if (xmlhttp.readyState == 4) {
 		if(xmlhttp.status == 200) {
 			
-			//TODO: parse response for each container, check for artist-events status
-			//get XSL
-			var xsl = loadXSL(xsl_artist);
+			//prepare variables
+			var xsl;
 			var parsedContent = "";
+			var xsltProcessor;
 			
 			/*// code for IE
 			if (window.ActiveXObject)
@@ -169,15 +162,39 @@ function handleSearchResponse(){
 			// code for Mozilla, Firefox, Opera, etc.
 			else*/ if (document.implementation && document.implementation.createDocument)
 			{
-				var xsltProcessor = new XSLTProcessor();
+				//***************************************** ARTIST
+				xsl = loadXSL(xsl_artist);
+				xsltProcessor = new XSLTProcessor();
 				xsltProcessor.importStylesheet(xsl);
 				var xmlRef = document.implementation.createDocument("", "", null);
-				
 				result = xsltProcessor.transformToFragment(xmlhttp.responseXML, document);
 				parsedContent = result;
 				updateContent('artist-content', parsedContent);
+				
+				//***************************************** EVENTS
+				//TODO
+				
+				//***************************************** VIDEOS
+				//TODO
+				
+				//***************************************** IMAGE
+				xsl = loadXSL(xsl_image);
+				xsltProcessor = new XSLTProcessor();
+				xsltProcessor.importStylesheet(xsl);
+				var xmlRef = document.implementation.createDocument("", "", null);
+				result = xsltProcessor.transformToFragment(xmlhttp.responseXML, document);
+				parsedContent = result;
+				var newimagearray = new Array();
+				var contentasstring = parsedContent.toString();
+				try {
+					updateContent("imageholder", parsedContent);
+					setNewImages(document.getElementById("imageholder").innerHTML);
+				} catch (e) {
+					alert(e);
+				}
+				
 			} else {
-				alert("Error during XSL transformation (are you using Firefox? You should..)");
+				alert("Error during XSL transformation (are you using Firefox? You should ;)");
 			}
 		}
 		else {
@@ -188,6 +205,7 @@ function handleSearchResponse(){
 }
 
 //TODO: check if needed!!
+/*
 function contentHandler(xml){
 
 	//load XSL
@@ -227,12 +245,12 @@ function contentHandler(xml){
 	updateContent('artist', fragment);
 
 }
+*/
 
 function updateContent(id, newContent){
 	document.getElementById(id).innerHTML = "";
 	document.getElementById(id).appendChild(newContent);
 	//document.getElementById(id).innerHTML = newContent;
-	loaded(id);
 }
 
 function containersLoading(){
@@ -629,6 +647,27 @@ function nextImage(){
 	loadImage(getNextImgPos());
 	loaded('image');
 }
+
+function setNewImages(raw){
+	var newimagearray = raw.split("||");
+	//alert("images #: "+ newimagearray.length);
+	image_array = null;
+	image_array = new Array();
+	if(newimagearray.length > 0){
+		for(i = 0; i < newimagearray.length; i++){
+			if("" != newimagearray[i]){
+				//alert(newimagearray[i]);
+				image_array[i] = new image(newimagearray[i],"",100,100,"");
+			}
+		}
+		image_array_pos = 0;
+		loadImage(image_array_pos);
+	} else {
+		alert("no image found");
+	}
+}
+
+//
 
 function preventReloading(){
 	alert("You are going to reload every content!");
