@@ -9,6 +9,9 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
+  <listener>
+  	<listener-class>iwa1.servlets.SessionManager</listener-class>
+  </listener>
   <servlet>
     <description></description>
     <display-name>MainServlet</display-name>
@@ -19,4 +22,7 @@
     <servlet-name>MainServlet</servlet-name>
     <url-pattern>/MainServlet</url-pattern>
   </servlet-mapping>
+  	<session-config>
+		<session-timeout>30</session-timeout>  <!-- 30 minutes -->
+	</session-config>
 </web-app>
