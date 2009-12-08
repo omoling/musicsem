@@ -29,7 +29,7 @@ public class DataFlickr {
 	
 	//Properties of the model
 	public static Property title = null;
-	public static Property identifier = null;
+	public static Property img = null;
 	public static Property name = null; 
 	public static Property depicts = null;
 	public static Property img_width = null;
@@ -115,7 +115,7 @@ public class DataFlickr {
 	 depicts = flickr_model.getProperty(FOAF.getURI(), "depicts");
 	 name = flickr_model.getProperty(FOAF.getURI(), "name");
 	 title = flickr_model.getProperty(DC.getURI(),"title");
-	 identifier = flickr_model.getProperty(DC.getURI(),"identifier"); 
+	 img = flickr_model.getProperty(FOAF.getURI(),"img"); 
 	 img_width = flickr_model.createProperty("http://ns.adobe.com/tiff/1.0/","ImageWidth");
 	 img_height = flickr_model.createProperty("http://ns.adobe.com/tiff/1.0/","ImageLength");
 	 
@@ -129,7 +129,7 @@ public class DataFlickr {
 	{
 		//Create a foaf:Image Resource
 		Resource photo = flickr_model.createResource(FOAF.Image);
-		photo.addProperty(identifier,photoURL);
+		photo.addProperty(img,photoURL);
 		photo.addProperty(title, photo_title);
         photo.addProperty(depicts,res);
 		

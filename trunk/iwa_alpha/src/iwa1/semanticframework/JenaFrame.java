@@ -2,12 +2,6 @@ package iwa1.semanticframework;
 
 import java.io.BufferedReader;
 
-
-
-
-
-
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -42,8 +36,7 @@ import com.hp.hpl.jena.util.FileManager;
 
 public class JenaFrame {
 	public static OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF);
-	public static OntModel dbmodel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF);
-	//public static InfModel infModel = null;
+    public static Model qmodel = ModelFactory.createDefaultModel();
 
 	public static void init()
 	{
@@ -57,10 +50,21 @@ public class JenaFrame {
 	  {
 		 e.printStackTrace();
 	  }
-	 //load the dbpedia ontology into the model
-	 model.read(inputStream, null);
 
 	 
+	 //load the dbpedia ontology into the model
+	 model.read(inputStream, null);
+	 
+     model.read("http://www.mindswap.org/~glapizco/technical.owl");
+	 
+	 //Set Prefixes
+	 model.setNsPrefix("dbpedia2","http://dbpedia.org/property/");
+	 model.setNsPrefix("mindswap","http://www.mindswap.org/~glapizco/technical.owl#");
+	 model.setNsPrefix("dbpedia-owl","http://dbpedia.org/ontology/");	
+	 
+	//Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+	//reasoner.bindSchema(model);
+
 	}
 	
 	public static void import_rdf(String rdf_data)
@@ -112,15 +116,9 @@ public class JenaFrame {
 	}
 */	
 	
-	public static String query_model() {
-		/*
-		Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
-		reasoner.bindSchema(model);
-		infModel = ModelFactory.createInfModel(reasoner,dbmodel);	
-		*/
-		
-	
+	public static String query_model(String keyword) {		
 		String queryString=
+			
 			"PREFIX owl: <http://www.w3.org/2002/07/owl#> "+
             "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
             "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "+
@@ -130,37 +128,72 @@ public class JenaFrame {
             "PREFIX dbpedia2: <http://dbpedia.org/property/> "+
             "PREFIX dbpedia-owl: <http://dbpedia.org/ontology/> "+
             "PREFIX dbpedia: <http://dbpedia.org/resource/> "+
-            "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "+
-			"CONSTRUCT { "+ 
+            "PREFIX mindswap: <http://www.mindswap.org/~glapizco/technical.owl#> "+
+            "PREFIX m: <http://www.kanzaki.com/ns/music#> "+
+            "PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>" +
+            "PREFIX vCard: <http://www.w3.org/2001/vcard-rdf/3.0#>" +
+			///*
+            "CONSTRUCT { "+
 			"?s rdf:type foaf:Agent; "+
 			"foaf:name ?name; "+
 			"dbpedia2:abstract ?abstract; "+
+			"dbpedia2:currentMembers ?currentMembers; "+
+			"dbpedia2:yearsActive ?yearsActive; "+
 			"dbpedia2:genre ?genre; "+
 			"dbpedia-owl:thumbnail ?thumbnail; "+
-			"dbpedia2:url ?url.} "+
-			"WHERE { "+
-			"GRAPH ?originGraph{" +
-			"?s a dbpedia-owl:Artist. "+
+			"dbpedia2:url ?url; " +
+			"foaf:img ?img;"+
+			"mindswap:Video ?Video;"+
+			"dc:title ?video_tile;"+
+			"dc:identifier ?video_id;"+
+			"mindswap:hasDuration ?video_duration."+
+			"} "+
+			"WHERE {" +
+			//"GRAPH ?g{ "+
+			"?s rdf:type foaf:Agent. "+
 			"?s foaf:name ?name. "+
 			"?s dbpedia2:abstract ?abstract. "+
-			"?s  dbpedia2:genre ?genre. "+
+			"OPTIONAL { ?s dbpedia2:currentMembers ?currentMembers }. "+
 			"?s  dbpedia-owl:thumbnail ?thumbnail. "+
+			"?s dbpedia2:yearsActive ?yearsActive. "+
+			"?s  dbpedia2:genre ?genre. "+
 			"?s  dbpedia2:url ?url. "+
-			"FILTER (regex(?name, \"Moby\")). "+
-			"FILTER langMatches( lang(?abstract), 'en'). "+
-			"}}";
-
-		
+			//Images
+			"?Image foaf:img ?img. "+
+			"?Image  foaf:depicts ?m. "+
+			"?m foaf:name ?name. "+
+			//Videos
+			"?Video rdf:type mindswap:Video. "+
+			"?Video dc:title ?video_title. "+
+			"?Video dc:identifier ?video_id. "+
+			"?Video mindswap:hasDurationSeconds ?video_duration. "+
+			"?Video mindswap:depicts ?x. "+
+			"?x foaf:name ?name. "+
+			"FILTER (regex(?name, \""+keyword+"\")). "+
+			"}";
+            //*/
+            
+            /*
+            "SELECT ?s  ?p ?o "+
+            "WHERE { "+
+            "?s a dbpedia-owl:Artist."+
+            "?s foaf:name ?artistName. "+
+            "?s ?p ?o. "+
+            "FILTER (regex(?artistName, \"Moby\")) "+
+            "}";
+		    */
 		
 		Query query = QueryFactory.create(queryString);
 		//Query local model
-		QueryExecution local_exec= QueryExecutionFactory.create(query, JenaFrame.model);
-	    try {
-	    	
-             ResultSet results = local_exec.execSelect();
-             String xml = ResultSetFormatter.asXMLString( results );
-             return xml;        
-            
+		QueryExecution local_exec= QueryExecutionFactory.create(query,model);
+		try {			
+			 //ResultSet results = local_exec.execSelect();
+	    	 qmodel = local_exec.execConstruct(); 
+			 ByteArrayOutputStream rdf_stream= new ByteArrayOutputStream();
+			 qmodel.write(rdf_stream);
+			 return rdf_stream.toString();	    
+            //String xml = ResultSetFormatter.asXMLString(results);
+            //return xml;
             } 
           finally 
             {
