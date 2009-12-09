@@ -295,10 +295,8 @@ function initializeMap() {
 }
 
 function newArtist(name){
-	if(name != current_artist){
-		document.getElementById("search").value = name;
-		ajaxSearch(3);
-	}
+	document.getElementById("search").value = name;		
+	ajaxSearch(3);
 }
 
 //Youtube
