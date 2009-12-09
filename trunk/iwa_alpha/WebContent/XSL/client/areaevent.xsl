@@ -19,16 +19,22 @@
 <xsl:output method="html" version='1.0' encoding='UTF-8' indent='yes'/>
 <xsl:template match="/">
 	<ul class="eventlist">
-		<xsl:apply-templates select="rdf:RDF/rdf:Description"/>
+		<xsl:apply-templates select="rdf:RDF/m:Concert"/>
 	</ul>
 </xsl:template>
 
-<xsl:template match="rdf:RDF/rdf:Description">
-	<xsl:if test="vCard:URL">
+
+<xsl:template match="rdf:RDF/m:Concert">
+	<ul class="eventlist">
+		<xsl:if test="vCard:URL">
 		<li class="eventlist">
 			<strong>
 			<xsl:value-of select="dc:identifier"/><br />
 			<xsl:value-of select="dc:date"/><br /></strong>
+			<a href="javascript:void(0);">
+				<xsl:attribute name="onclick">newArtist('<xsl:value-of select="dc:title" />');</xsl:attribute>
+				Artist: <xsl:value-of select="dc:title" />
+			</a><br/>
 			<a href="javascript:void(0);">
 				<xsl:attribute name="onclick">updateMap('<xsl:value-of select="vCard:Pcode" />, <xsl:value-of select="vCard:Locality" />, <xsl:value-of select="vCard:Country" />, <xsl:value-of select="dc:identifier" />');</xsl:attribute>
 				<xsl:value-of select="vCard:Pcode" />, <xsl:value-of select="vCard:Locality" />, <xsl:value-of select="vCard:Country" />, <xsl:value-of select="dc:identifier" />
@@ -42,7 +48,8 @@
 			<a href="javascript:void(0);" onclick="newArtist('U2');">Moby</a>
 			 -->
 		</li>
-	</xsl:if>
+		</xsl:if>
+	</ul>
 </xsl:template>
 
 </xsl:stylesheet>
