@@ -37,14 +37,6 @@ function initializePage(){
 
 	//Google Maps
 	initializeMap();
-	
-	//initialize 2 test video
-	var testvideo1 = new video("u1zgFlCw8Aw");
-	var testvideo2 = new video("uDkBzkA9L4s");
-	video_array[0] = testvideo1;
-	video_array[1] = testvideo2;
-	video_array_pos = 0;
-	loadVideo(video_array_pos);
 }
 
 function positionContainers(){
@@ -175,7 +167,19 @@ function handleSearchResponse(){
 				//TODO
 				
 				//***************************************** VIDEOS
-				//TODO
+				xsl = loadXSL(xsl_video);
+				xsltProcessor = new XSLTProcessor();
+				xsltProcessor.importStylesheet(xsl);
+				var xmlRef = document.implementation.createDocument("", "", null);
+				result = xsltProcessor.transformToFragment(xmlhttp.responseXML, document);
+				parsedContent = result;
+				var contentasstring = parsedContent.toString();
+				try {
+					updateContent("videoholder", parsedContent);
+					setNewVideos(document.getElementById("videoholder").innerHTML);
+				} catch (e) {
+					alert(e);
+				}
 				
 				//***************************************** IMAGE
 				xsl = loadXSL(xsl_image);
@@ -184,7 +188,6 @@ function handleSearchResponse(){
 				var xmlRef = document.implementation.createDocument("", "", null);
 				result = xsltProcessor.transformToFragment(xmlhttp.responseXML, document);
 				parsedContent = result;
-				var newimagearray = new Array();
 				var contentasstring = parsedContent.toString();
 				try {
 					updateContent("imageholder", parsedContent);
@@ -333,6 +336,7 @@ function initializeYoutube(){
 			"ytapiplayer", "327", "283", "8", null, null, params, atts);
 }
 
+/*
 function resizeSWF(width, height){
 	var videoid = document.getElementById("videoid").value;
 	var state = getPlayerState();
@@ -342,6 +346,7 @@ function resizeSWF(width, height){
 	loadNewVideo(videoid, 0);
 	setytplayerstate(state);
 }
+*/
 
 /*function updateHTML(elmId, value) {
 	document.getElementById(elmId).innerHTML = value;
@@ -536,16 +541,21 @@ function loadVideo(pos){
 			pos = -1;
 		}
 	}
+	
+	var position_element = document.getElementById("videoposition");
+	var total_element = document.getElementById("videototal");
+	var duration_element = document.getElementById("videoduration");
+	
 	if (pos >= 0){
 		var videotoload = video_array[pos];
-		loadNewVideo(videotoload.id, 0);
-		var position_element = document.getElementById("videoposition");
-		var total_element = document.getElementById("videototal");
+		loadNewVideo(videotoload.id, 0);	
 		position_element.innerHTML = pos+1 + " / ";
 		total_element.innerHTML = video_array.length;
+		duration_element.innerHTML = "Duration: " + videotoload.duration + " ";
 	} else {
 		position_element.innerHTML = "0 / ";
 		total_element.innerHTML = "0 [no video]";
+		duration_element.innerHTML = "Duration: / ";
 	}
 }
 
@@ -648,6 +658,28 @@ function nextImage(){
 	loaded('image');
 }
 
+function setNewVideos(raw){
+	var newvideoarray = raw.split("||");
+	//alert("videos #: "+ newvideoarray.length);
+	video_array = null;
+	video_array = new Array();
+	if(newvideoarray.length > 0){
+		var videoinfo;
+		for(i = 0; i < newvideoarray.length; i++){
+			if("" != newvideoarray[i]){
+				videoinfo = newvideoarray[i].split("|");
+				if("" != videoinfo[0]){
+					video_array[i] = new video(videoinfo[0],videoinfo[1]);
+				}
+			}
+		}
+		video_array_pos = 0;
+		loadVideo(video_array_pos);
+	} else {
+		alert("no image found");
+	}
+}
+
 function setNewImages(raw){
 	var newimagearray = raw.split("||");
 	//alert("images #: "+ newimagearray.length);
@@ -689,8 +721,9 @@ function image(src,alt,width,height,title){
 	this.title = title;
 }
 
-function video(id){
+function video(id, duration){
 	this.id = id;
+	this.duration = duration;
 }
 
 function marker(marker){
