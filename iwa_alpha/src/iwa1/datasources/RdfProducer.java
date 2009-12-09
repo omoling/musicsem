@@ -24,7 +24,6 @@ public class RdfProducer {
 			
 			// Load StreamSource objects with XML and XSLT files
 			DOMSource xmlSource = new DOMSource(docXMLString);
-			//StreamSource xsltSource = new StreamSource( new File("/Users/psyle/Documents/workspace/iwa_alpha/WebContent/test.xsl") );
 			StreamSource xsltSource = new StreamSource( new File(xsl_filename) );
 			//Serialize DOMSource to a String
 			StringWriter strWriter = new StringWriter();

@@ -22,7 +22,7 @@ import javax.servlet.http.HttpSessionEvent;
  */
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
+    public static String lastfm_str;
 	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -96,6 +96,7 @@ public class MainServlet extends HttpServlet {
 				if(lastfm_res!=null)
 				{ 
 					String lastfm_rdf = DataLastFm.Lastfm_rdf(lastfm_res);	 
+					lastfm_str=lastfm_rdf;
 					JenaFrame.import_rdf(lastfm_rdf);
 				}	 
 				
@@ -106,7 +107,7 @@ public class MainServlet extends HttpServlet {
 				DataYouTube.addNflush();
 				
 				//Show model
-				String rdf_model=JenaFrame.show_model();
+				//String rdf_model=JenaFrame.show_model();
 				
 				//Query local model
 				String local_query = JenaFrame.query_model(keyword);
