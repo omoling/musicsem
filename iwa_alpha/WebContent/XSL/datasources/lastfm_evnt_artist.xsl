@@ -37,32 +37,32 @@
       </xsl:if>
       <xsl:if test="artists/artist">
        <xsl:for-each select="artists/artist">  
-            <m:Artist foaf:name="{.}"/>     
-          </xsl:for-each>  
-      </xsl:if>
-     <xsl:if test="artists/headliner">
-       <xsl:for-each select="artists/headliner">  
-          <m:Artist foaf:name="{.}"/>  
        </xsl:for-each>  
       </xsl:if>
-      <m:venue>
+    
+     <xsl:if test="artists/headliner">
+       <xsl:for-each select="artists/headliner">     
+             <m:performerName><xsl:value-of select="."/></m:performerName>      
+       </xsl:for-each>  
+      </xsl:if>
+        <m:event_description>
        <m:Venue>
           <dc:title><xsl:value-of select="venue/name"/></dc:title>
         <xsl:if test="venue/website!=''">
           <vCard:URL rdf:resource="{venue/website}"/>
         </xsl:if>
-         <vCard:ADR rdf:parseType="Resource">
+         <vCard:ADRTYPES>
          <vCard:Street><xsl:value-of select="venue/location/street"/></vCard:Street>
          <vCard:Locality><xsl:value-of select="venue/location/city"/></vCard:Locality>
          <vCard:Pcode> <xsl:value-of select="venue/location/postalcode"/></vCard:Pcode>  
          <vCard:Country> <xsl:value-of select="venue/location/country"/></vCard:Country> 
-        </vCard:ADR>
-        <geo:point>
+        </vCard:ADRTYPES>
+        <geo:Point>
          <geo:lat><xsl:value-of select="venue/location/geo:point/geo:lat"/></geo:lat>
          <geo:long><xsl:value-of select="venue/location/geo:point/geo:long"/></geo:long>
-        </geo:point>           
+        </geo:Point>
       </m:Venue>
-      </m:venue>
+      </m:event_description>
      </m:Concert>
    </xsl:for-each>    
  </xsl:template>

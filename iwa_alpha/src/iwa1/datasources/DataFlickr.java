@@ -73,7 +73,7 @@ public class DataFlickr {
 	     {
 	    	 //Initialize model
 	    	 init_model();
-	        //Get search result and check the size of photo result
+	        //Get search result
 	        for(int i=0;i<photoList.size();i++)
 	        {
 	           //Get photo object
@@ -81,12 +81,7 @@ public class DataFlickr {
 	           //Get medium size photo URL
 	           String photo_url= photo.getMediumUrl();
 	           //Get title
-	           String photo_title = photo.getTitle();
-	           //Get size
-	           //Size photo_size = photo.getMediumSize();
-	           //int photo_width = photo_size.getWidth();
-	           //int photo_height = photo_size.getHeight();
-	           
+	           String photo_title = photo.getTitle();	           
 	           //Add photo to model
 	           addPhoto(photo_url,photo_title);
 	           
