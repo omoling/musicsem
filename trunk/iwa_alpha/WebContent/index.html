@@ -25,7 +25,7 @@
 			opacity: 1.0
 		});
 		$("#image-container").draggable();
-		$("#test-container").draggable();
+		//$("#test-container").draggable();
 	});
 
 	//set resizable containers
@@ -101,7 +101,7 @@
 				resizeImage(w, h);
 			}
 		});
-		$("#test-container").resizable();
+		//$("#test-container").resizable();
 	});
 </script>
  
@@ -130,10 +130,14 @@
 		<input type="submit" value="Search" /><br />
 	</form>		
 	<br /><br />
-	<input type="button" onclick="ajaxSearch();" value="Search" />
-	<input type="button" onclick="isloading('event');" value="TestLoading" />
-	<input type="button" onclick="loaded('event');" value="TestLoaded" />
+	<input type="button" onclick="ajaxSearch(1);" value="Search" />
+	<input type="button" onclick="divloading();" value="TestLoading" />
+	<input type="button" onclick="divloaded();" value="TestLoaded" />
 	<br /><br />
+</div>
+
+<div id="loadingdiv" class="not-loading" style="position:fixed;top:5px;left:5px;z-index:100;">
+	<img src="images/loading.gif" alt="loading..." />
 </div>
 
 <!-- ************************************* ARTIST ********************************************** -->
@@ -154,28 +158,6 @@
 	<div id="event" class="content-box">
 		<div id="event-title" class="content-title">Events</div>
 		<div id="event-content" class="content-inside">
-			<ul class="eventlist">
-				<li class="eventlist">
-					<strong><span>Event title</span> - 
-					<span>Start date</span><br /></strong>
-					<span>Description description description description</span><br />
-					<span>Venue</span> - 
-					<span><a href="javascript:void(0);" onclick="updateMap(2.2, 2.2, 'Venue address');">Venue address</a></span>
-					<span><a href="javascript:void(0);" onclick="newArtist('Queen');">Artist</a></span><br />
-					<span>Headliner</span><br />
-					<span><a href="website" target="_blank">Website</a></span>
-				</li>
-				<li class="eventlist">
-					<strong><span>Event title</span> - 
-					<span>Start date</span><br /></strong>
-					<span>Description description description description</span><br />
-					<span>Venue</span> - 
-					<span><a href="javascript:void(0);" onclick="updateMap(40.2, 40.2, 'Venue address');">Venue address</a></span>
-					<span><a href="javascript:void(0);" onclick="newArtist('U2');">Artist</a></span><br />
-					<span>Headliner</span><br />
-					<span><a href="website" target="_blank">Website</a></span>
-				</li>
-			</ul>
 		</div>
 	</div>
 	<div id="event-bottom" class="bottombar" >
@@ -258,6 +240,7 @@
 	<div id="image-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
 
+<!--
 <div id="test-container" class="content-container" onmousedown="increaseZ('test-container');">
 	<div id="test" class="content-box">
 		<div id="test-title" class="content-title">test</div>
@@ -269,6 +252,7 @@
 	</div>
 	<div id="test-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
 </div>
+-->
 
 </div>
 

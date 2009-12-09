@@ -5,6 +5,8 @@ var _zIndex = 0;
 var map;
 //google map central marker
 var centerMarker;
+//mode 1:artist 2:events
+var mode = 1;
 
 //current content in containers
 var current_artist;
@@ -42,7 +44,7 @@ function initializePage(){
 function positionContainers(){
 	//get the float position and reset is as abolute positioned
 	//oder must be reversed as displayed
-	positionContainer("test-container");
+	//positionContainer("test-container");
 	positionContainer("image-container");
 	positionContainer("video-container");
 	positionContainer("map-container");
@@ -50,7 +52,7 @@ function positionContainers(){
 	positionContainer("artist-container");
 }
 
-function positionContainer(id, top, left){
+function positionContainer(id){
 	var container = document.getElementById(id);
 	var top = container.offsetTop;
 	var left = container.offsetLeft;
@@ -92,10 +94,14 @@ function getXMLObject()  //XML OBJECT
 
 var xmlhttp = new getXMLObject();
 
-function ajaxSearch() {
-	containersLoading();
+function ajaxSearch(m) {
+	mode = m;
+	var searchString = document.getElementById("search").value;
+	current_artist = searchString;
+	//containersLoading();
+	//isloading('artist');
+	divloading();
 	if(xmlhttp){
-		var searchString = document.getElementById("search").value;
 		xmlhttp.open("GET","MainServlet?type=artist&search="+searchString, true);
 		xmlhttp.onreadystatechange = handleSearchResponse;
 		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -106,9 +112,10 @@ function ajaxSearch() {
 }
 
 function ajaxEvents(location) {
+	mode = 2;
 	if(xmlhttp){
 		xmlhttp.open("GET","MainServlet?type=eventsnearby&search="+location, true);
-		xmlhttp.onreadystatechange = handleEventsResponse;
+		xmlhttp.onreadystatechange = handleSearchResponse;
 		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xmlhttp.send(null);
 	} else {
@@ -126,11 +133,22 @@ function loadXSL(filename){
 	return xsl;
 }
 
+function divloading(){
+	//document.getElementById('loadingdiv').style.display = "block";
+	document.getElementById('loadingdiv').className = "loading";
+}
+
+function divloaded(){
+	//document.getElementById('loadingdiv').style.display = "none";
+	document.getElementById('loadingdiv').className = "not-loading";
+}
+
 function handleEventsResponse(){
 	if (xmlhttp.readyState == 4) {
 		if(xmlhttp.status == 200) {
 			//alert(xmlhttp.responseText);
-			updateContent('page', xmlhttp.responseText);
+			//updateContent('page', xmlhttp.responseText);
+			alert("got response, not implemented yet");
 		}
 	}
 }
@@ -154,6 +172,8 @@ function handleSearchResponse(){
 			// code for Mozilla, Firefox, Opera, etc.
 			else*/ if (document.implementation && document.implementation.createDocument)
 			{
+			
+			if(mode == 1){
 				//***************************************** ARTIST
 				xsl = loadXSL(xsl_artist);
 				xsltProcessor = new XSLTProcessor();
@@ -162,9 +182,6 @@ function handleSearchResponse(){
 				result = xsltProcessor.transformToFragment(xmlhttp.responseXML, document);
 				parsedContent = result;
 				updateContent('artist-content', parsedContent);
-				
-				//***************************************** EVENTS
-				//TODO
 				
 				//***************************************** VIDEOS
 				xsl = loadXSL(xsl_video);
@@ -195,6 +212,16 @@ function handleSearchResponse(){
 				} catch (e) {
 					alert(e);
 				}
+			}
+				//***************************************** EVENTS
+				xsl = loadXSL(xsl_event);
+				xsltProcessor = new XSLTProcessor();
+				xsltProcessor.importStylesheet(xsl);
+				var xmlRef = document.implementation.createDocument("", "", null);
+				result = xsltProcessor.transformToFragment(xmlhttp.responseXML, document);
+				parsedContent = result;
+				updateContent('event-content', parsedContent);
+				
 				
 			} else {
 				alert("Error during XSL transformation (are you using Firefox? You should ;)");
@@ -204,51 +231,10 @@ function handleSearchResponse(){
 			alert("Error during AJAX call. Please try again. (" + xmlhttp.status + ")");
 		}
 	}
-	containersLoaded();
+	//containersLoaded();
+	//loaded('artist');
+	divloaded();
 }
-
-//TODO: check if needed!!
-/*
-function contentHandler(xml){
-
-	//load XSL
-	//TODO: extend for all XSL
-	var xsl=loadXMLFile("test.xsl");
-
-	//html content var
-	//TODO: extend for all containers
-	var htmlContent = "";
-
-	//TODO: load all XSL needed
-	var xsl = loadXsl('test.xsl');
-
-	//TODO: run for all containers-xsl
-
-	if (window.ActiveXObject)
-	{
-		htmlContent = xml.transformNode(xsl);
-	}
-	// code for Mozilla, Firefox, Opera, etc.
-	else if (document.implementation && document.implementation.createDocument)
-	{
-		xsltProcessor = new XSLTProcessor();
-		xsltProcessor.importStylesheet(xsl);
-
-		var xmlRef = document.implementation.createDocument("", "", null);
-		var myNode = document.getElementById(xmlIsland);
-		var clonedNode = xmlRef.importNode(myNode.childNodes.item(1), true);
-		xmlRef.appendChild(clonedNode);
-
-		// do the transform
-		var fragment = xsltProcessor.transformToFragment(xmlRef, document);
-	}	
-
-	//update containers
-	//TODO: update all containers
-	updateContent('artist', fragment);
-
-}
-*/
 
 function updateContent(id, newContent){
 	document.getElementById(id).innerHTML = "";
@@ -309,15 +295,10 @@ function updateMap(lat, lng, title){
 }
 
 function newArtist(name){
-	
-	//update artist container
-	
-	//update event container for given new artist
-	
-	//update video container for given new artist
-	
-	alert("not impelemnted yet!");
-	
+	if(name != current_artist){
+		document.getElementById("search").Value = name;
+		ajaxSearch(2);
+	}
 }
 
 //Youtube

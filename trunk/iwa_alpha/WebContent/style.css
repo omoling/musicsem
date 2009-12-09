@@ -101,3 +101,10 @@ li.eventlist {
 	background: #454545;
 }
 
+.not-loading {
+	display: none;
+}
+
+.loading {
+	display: block;
+}
