@@ -70,8 +70,7 @@ public class JenaFrame {
      model.read("http://www.w3.org/2001/vcard-rdf/3.0");
      //Load the geo ontology
      model.read("http://www.w3.org/2003/01/geo/wgs84_pos.rdf");
-     
-
+ 
 	 
 	 /*
 	 
@@ -109,37 +108,6 @@ public class JenaFrame {
 	
 	}
 	
-	/*
-	public static String show_infModel()
-	{
-		Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
-		reasoner.bindSchema(model);
-		InfModel infModel = ModelFactory.createInfModel(reasoner,dbmodel);	
-		ByteArrayOutputStream rdf_stream= new ByteArrayOutputStream();
-		infModel.write(rdf_stream);
-		return rdf_stream.toString();
-	
-	}
-
-	
-	public static void export_infModel()
-	{
-		try
-		{
-		 FileOutputStream out = new FileOutputStream("InfModel.rdf");
-		 Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
-		 reasoner.bindSchema(model);
-		 InfModel infModel = ModelFactory.createInfModel(reasoner,dbmodel);	
-		 infModel.prepare();
-		 infModel.write(out,"RDF/XML");
-	     out.close();
-		}
-		catch (Exception e) 
-		{
-			 e.printStackTrace();
-		}
-	}
-*/	
 	
 	public static String query_model(String keyword) {		
 		String queryString=			
@@ -174,12 +142,23 @@ public class JenaFrame {
 			"?Video dc:title ?video_tile."+
 			"?Video dc:identifier ?video_id."+
 			"?Video mindswap:hasDuration ?video_duration."+
-		/*	//Events
+			//Events
 			"?s m:Concert ?Concert."+
 			"?Concert dc:title ?evnt_tile."+
 			"?Concert dc:date ?evnt_date."+
 			"?Concert vCard:URL ?evnt_url."+
-		*/	
+			"?Concert m:event_description ?evnt_venue."+
+			"?evnt_venue dc:title ?evnt_venue_title."+
+		//	"?evnt_venue geo:Point ?evnt_Point. "+
+		//	"?evnt_Point geo:lat ?lat. " +
+		//	"?evnt_Point geo:long ?long. "+
+			
+		//	"?evnt_venue vCard:ADRTYPES ?evnt_venue_adr."+
+		//	"?evnt_venue_adr vCard:Street ?evnt_street."+
+		//	"?evnt_venue_adr vCard:Locality ?evnt_locality."+
+		//	"?evnt_venue_adr vCard:Pcode ?evnt_pcode."+
+		//	"?evnt_venue_adr vCard:Country ?evnt_country."+
+			
 			"} "+
 			"WHERE {" +
 			"?s rdf:type foaf:Agent. "+
@@ -203,13 +182,26 @@ public class JenaFrame {
 			"?Video mindswap:hasDurationSeconds ?video_duration. "+
 			"?Video mindswap:depicts ?x. "+
 			"?x foaf:name ?name. "+
-		/*	//Events
+			//Events
 			"?Concert rdf:type m:Concert. "+
 			"?Concert dc:date ?evnt_date. "+
+			"?Concert m:performerName ?name. "+
 			"?Concert vCard:URL ?evnt_url. "+
-			"?Concert m:Artist ?evnt_artist. "+
-			"?evnt_artist foaf:name ?name."+
-		*/	
+			"?evnt_venue rdf:type m:Venue. "+
+			"?Concert m:event_description ?evnt_venue. "+
+			"?evnt_venue dc:title ?evnt_venue_title. "+
+	//		"?evnt_Point rdf:type geo:Point. "+
+    //		"?evnt_venue geo:Point ?evnt_Point. "+
+	//		"?evnt_Point geo:lat ?lat. " +
+	//		"?evnt_Point geo:long ?long. "+
+			
+	//  	"?evnt_venue_adr rdf:type vCard:ADRTYPES."+
+	//		"?evnt_venue vCard:ADRTYPES ?evnt_venue_adr."+
+	//		"?evnt_venue_adr vCard:Street ?evnt_street."+
+	//		"?evnt_venue_adr vCard:Locality ?evnt_locality."+
+	//		"?evnt_venue_adr vCard:Pcode ?evnt_pcode."+
+	//		"?evnt_venue_adr vCard:Country ?evnt_country."+
+			
 			"FILTER (regex(?name, \""+keyword+"\")). "+
 			"}";
             		
