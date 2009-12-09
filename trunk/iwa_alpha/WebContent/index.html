@@ -121,19 +121,20 @@
 		$('#video-container').draggable('enable');
 	});">
 <div id="page" class="page">
-<form action="MainServlet?type=artist"  name="keyform"  onsubmit= "return keyNotEmpty()" method="post">
-	Artist:
-	<input type="text" id="search" name="search" /><br />
-	<input type="submit" value="Search" /><br />
-</form>		
-<br /><br />
-<input type="button" onclick="ajaxSearch();" value="Search" />
-<input type="button" onclick="ajaxGetArtist();" value="Search Artist" />
-<input type="button" onclick="isloading('event');" value="TestLoading" />
-<input type="button" onclick="loaded('event');" value="TestLoaded" />
-<input type="button" onclick="testXslLoading();" value="TestXslLoading" />
-<input type="button" onclick="testObjects();" value="Test Objects" />
-<br /><br />
+
+<div style="text-align:center;">
+	<form action="MainServlet?type=artist"  name="keyform"  onsubmit= "return keyNotEmpty()" method="post">
+		<br/><br/>
+		Artist:
+		<input type="text" id="search" name="search" />&nbsp;
+		<input type="submit" value="Search" /><br />
+	</form>		
+	<br /><br />
+	<input type="button" onclick="ajaxSearch();" value="Search" />
+	<input type="button" onclick="isloading('event');" value="TestLoading" />
+	<input type="button" onclick="loaded('event');" value="TestLoaded" />
+	<br /><br />
+</div>
 
 <!-- ************************************* ARTIST ********************************************** -->
 <div id="artist-container" class="content-container" onmousedown="increaseZ('artist-container');">
@@ -186,7 +187,7 @@
 <!-- ************************************* MAP ************************************************** -->
 <div id="map-container" class="content-container" onmousedown="increaseZ('map-container');">
 	<div id="map" class="content-box">
-		<div id="map-title" class="content-title">Google Maps</div>
+		<div id="map-title" class="content-title">Map</div>
 		<div id="map_canvas" class="content-inside" 
 			onmousedown="$(function() { $('#map-container').draggable('disable'); });">
 		</div>
@@ -200,7 +201,7 @@
 <!-- ************************************* VIDEO *********************************************** -->
 <div id="video-container" class="content-container" onmousedown="increaseZ('video-container');">
 	<div id="video" class="content-box">
-		<div id="video-title" class="content-title">Youtube</div>
+		<div id="video-title" class="content-title">Videos</div>
 		<div id="video-content" class="content-inside"
 			onmousedown="$(function() { $('#video-container').draggable('disable'); });"
 			onmouseup="$(function() { $('#video-container').draggable('enable'); });" 
@@ -221,6 +222,9 @@
 				<a href="javascript:void(0);" onclick="previousVideo();" >previous</a> | 
 				<a href="javascript:void(0);" onclick="nextVideo();" >next</a>
 			</div>	
+			<div style="float:right;">
+				<span id="videoduration"></span>&nbsp;&nbsp;
+			</div>
 		</div>
 	</div>
 	<div id="video-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>
@@ -229,7 +233,7 @@
 <!-- ************************************* IMAGE *********************************************** -->
 <div id="image-container" class="content-container" onmousedown="increaseZ('image-container');">
 	<div id="image" class="content-box">
-		<div id="image-title" class="content-title">Flickr</div>
+		<div id="image-title" class="content-title">Pictures</div>
 	<div id="image-content" class="content-inside">
 		<div id="image-holder" class="imageholder">
 			<a id="imagelink" href="" target="_blank">
@@ -269,7 +273,8 @@
 </div>
 
 <div id="imageholder" style="display:none;"></div>
-<input type="hidden" id="videoid" value="u1zgFlCw8Aw" />
+<div id="videoholder" style="display:none;"></div>
+<input type="hidden" id="videoid" value="" />
 
 </body>
 </html>
