@@ -123,16 +123,20 @@
 <div id="page" class="page">
 
 <div style="text-align:center;">
-	<form action="MainServlet?type=artist"  name="keyform"  onsubmit= "return keyNotEmpty()" method="post">
+	<!--  <form action="MainServlet?type=artist"  name="keyform"  onsubmit= "return keyNotEmpty()" method="post">-->
 		<br/><br/>
 		Artist:
 		<input type="text" id="search" name="search" />&nbsp;
+		<input type="button" onclick="ajaxSearch(1);" value="Search" />
+		<!-- 
 		<input type="submit" value="Search" /><br />
-	</form>		
+		 -->
+	<!-- </form> -->		
 	<br /><br />
-	<input type="button" onclick="ajaxSearch(1);" value="Search" />
+	<!-- 
 	<input type="button" onclick="divloading();" value="TestLoading" />
 	<input type="button" onclick="divloaded();" value="TestLoaded" />
+	 -->
 	<br /><br />
 </div>
 
@@ -174,7 +178,7 @@
 			onmousedown="$(function() { $('#map-container').draggable('disable'); });">
 		</div>
 		<div id="map-bottom" class="bottombar" >
-			<input type="button" onclick="eventsInArea();" value="Events today in the area" />
+			<input type="button" onclick="eventsInArea();" value="Events in the area" />
 		</div>
 	</div>
 	<div id="map-hover" class="content-hover"><img src="images/loading.gif" alt="loading..." /></div>

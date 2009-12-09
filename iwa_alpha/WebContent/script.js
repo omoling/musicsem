@@ -5,7 +5,7 @@ var _zIndex = 0;
 var map;
 //google map central marker
 var centerMarker;
-//mode 1:artist 2:events
+//mode 1:artist 2:events 3:otherthanevent
 var mode = 1;
 
 //current content in containers
@@ -15,6 +15,7 @@ var current_map_center;
 
 //XSL FILENAMES
 var xsl_artist = "artist.xsl";
+var xsl_areaevent = "areaevent.xsl";
 var xsl_event = "event.xsl";
 var xsl_image = "image.xsl";
 var xsl_video = "video.xsl";
@@ -143,6 +144,7 @@ function divloaded(){
 	document.getElementById('loadingdiv').className = "not-loading";
 }
 
+/*
 function handleEventsResponse(){
 	if (xmlhttp.readyState == 4) {
 		if(xmlhttp.status == 200) {
@@ -152,6 +154,7 @@ function handleEventsResponse(){
 		}
 	}
 }
+*/
 
 function handleSearchResponse(){
 	if (xmlhttp.readyState == 4) {
@@ -173,7 +176,7 @@ function handleSearchResponse(){
 			else*/ if (document.implementation && document.implementation.createDocument)
 			{
 			
-			if(mode == 1){
+			if(mode == 1 || mode == 3){
 				//***************************************** ARTIST
 				xsl = loadXSL(xsl_artist);
 				xsltProcessor = new XSLTProcessor();
@@ -212,16 +215,28 @@ function handleSearchResponse(){
 				} catch (e) {
 					alert(e);
 				}
+			
+				if(mode == 1){
+					//***************************************** EVENTS mode 1
+					xsl = loadXSL(xsl_event);
+					xsltProcessor = new XSLTProcessor();
+					xsltProcessor.importStylesheet(xsl);
+					var xmlRef = document.implementation.createDocument("", "", null);
+					result = xsltProcessor.transformToFragment(xmlhttp.responseXML, document);
+					parsedContent = result;
+					updateContent('event-content', parsedContent);
+				}
 			}
-				//***************************************** EVENTS
-				xsl = loadXSL(xsl_event);
+			if(mode == 2) {
+				//***************************************** EVENTS mode 2
+				xsl = loadXSL(xsl_areaevent);
 				xsltProcessor = new XSLTProcessor();
 				xsltProcessor.importStylesheet(xsl);
 				var xmlRef = document.implementation.createDocument("", "", null);
 				result = xsltProcessor.transformToFragment(xmlhttp.responseXML, document);
 				parsedContent = result;
 				updateContent('event-content', parsedContent);
-				
+			}
 				
 			} else {
 				alert("Error during XSL transformation (are you using Firefox? You should ;)");
@@ -279,25 +294,10 @@ function initializeMap() {
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);    
 }
 
-function updateMap(lat, lng, title){
-	isloading('map');
-	//set new center
-	var newCenter = new google.maps.LatLng(parseInt(lat),parseInt(lng));
-	map.setCenter(newCenter);
-	//set new center marker
-	centerMarker = null;
-	centerMarker = new google.maps.Marker({
-     		position: newCenter, 
-      		map: map,
-      		title: title
-		});
-	loaded('map');
-}
-
 function newArtist(name){
 	if(name != current_artist){
-		document.getElementById("search").Value = name;
-		ajaxSearch(2);
+		document.getElementById("search").value = name;
+		ajaxSearch(3);
 	}
 }
 
@@ -481,6 +481,42 @@ function increaseZ(id){
 	document.getElementById(id).style.zIndex = _zIndex;
 }
 
+function updateMap(address){
+	
+	/*
+	isloading('map');
+	//set new center
+	var newCenter = new google.maps.LatLng(parseInt(lat),parseInt(lng));
+	map.setCenter(newCenter);
+	//set new center marker
+	centerMarker = null;
+	centerMarker = new google.maps.Marker({
+     		position: newCenter, 
+      		map: map,
+      		title: title
+		});
+	loaded('map');
+	*/
+	
+	var geocoder = new google.maps.Geocoder();
+	var center = map.getCenter();
+	
+	if (geocoder) {
+	      geocoder.geocode( { 'address': address}, function(results, status) {
+	        if (status == google.maps.GeocoderStatus.OK) {
+	          map.setCenter(results[0].geometry.location);
+	          	  centerMarker = new google.maps.Marker({
+	              map: map, 
+	              position: results[0].geometry.location
+	          });
+	        } else {
+	          alert("Geocode was not successful for the following reason: " + status);
+	        }
+	      });
+	    }
+
+	
+}
 
 function eventsInArea(){
 	
@@ -500,6 +536,7 @@ function eventsInArea(){
 	        			  break;
 	        		  }
 	        	  }
+	        	  //document.getElementById("search").value = location;
 	        	  ajaxEvents(location);
 	            } else {
 	            	alert("Could not find the location!");
