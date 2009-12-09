@@ -95,8 +95,8 @@ public class MainServlet extends HttpServlet {
 				//Lastfm
 				if(lastfm_res!=null)
 				{ 
-					//String lastfm_rdf = DataLastFm.Lastfm_rdf(lastfm_res);	 
-					//JenaFrame.import_rdf(lastfm_rdf);
+					String lastfm_rdf = DataLastFm.Lastfm_rdf(lastfm_res);	 
+					JenaFrame.import_rdf(lastfm_rdf);
 				}	 
 				
 				//Flickr import
@@ -110,6 +110,8 @@ public class MainServlet extends HttpServlet {
 				
 				//Query local model
 				String local_query = JenaFrame.query_model(keyword);
+				//Clear result model
+				JenaFrame.qmodel.removeAll();
 				
 				//Response
 				response.setContentType("text/xml;charset=utf-8");
