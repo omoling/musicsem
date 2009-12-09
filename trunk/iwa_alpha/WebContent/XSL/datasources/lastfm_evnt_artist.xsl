@@ -32,6 +32,13 @@
 	   <dc:title><xsl:value-of select="title"/></dc:title>
 	   <dc:date><xsl:value-of select="startDate"/></dc:date>
 	   <vCard:URL rdf:resource="{url}"/>
+	    <dc:identifier><xsl:value-of select="venue/name"/></dc:identifier>
+       <geo:lat rdf:parseType="Literal"><xsl:value-of select="venue/location/geo:point/geo:lat"/></geo:lat>
+       <geo:long rdf:parseType="Literal"><xsl:value-of select="venue/location/geo:point/geo:long"/></geo:long>
+       <vCard:Street rdf:parseType="Literal"><xsl:value-of select="venue/location/street"/></vCard:Street>
+       <vCard:Locality rdf:parseType="Literal"><xsl:value-of select="venue/location/city"/></vCard:Locality>
+       <vCard:Pcode rdf:parseType="Literal"> <xsl:value-of select="venue/location/postalcode"/></vCard:Pcode>  
+       <vCard:Country rdf:parseType="Literal"> <xsl:value-of select="venue/location/country"/></vCard:Country> 
 	  <xsl:if test="description!=''">
        <dc:description><xsl:value-of select="description"/></dc:description>
       </xsl:if>
@@ -45,7 +52,8 @@
              <m:performerName><xsl:value-of select="."/></m:performerName>      
        </xsl:for-each>  
       </xsl:if>
-        <m:event_description>
+      <!--- out for now 
+       <m:event_description>
        <m:Venue>
           <dc:title><xsl:value-of select="venue/name"/></dc:title>
         <xsl:if test="venue/website!=''">
@@ -60,9 +68,10 @@
         <geo:Point>
          <geo:lat><xsl:value-of select="venue/location/geo:point/geo:lat"/></geo:lat>
          <geo:long><xsl:value-of select="venue/location/geo:point/geo:long"/></geo:long>
-        </geo:Point>
+       </geo:Point>
       </m:Venue>
       </m:event_description>
+     -->  
      </m:Concert>
    </xsl:for-each>    
  </xsl:template>

@@ -147,11 +147,16 @@ public class JenaFrame {
 			"?Concert dc:title ?evnt_tile."+
 			"?Concert dc:date ?evnt_date."+
 			"?Concert vCard:URL ?evnt_url."+
+			"?Concert dc:identifier ?evnt_venue. "+
 			"?Concert m:event_description ?evnt_venue."+
 			"?evnt_venue dc:title ?evnt_venue_title."+
-		//	"?evnt_venue geo:Point ?evnt_Point. "+
-		//	"?evnt_Point geo:lat ?lat. " +
-		//	"?evnt_Point geo:long ?long. "+
+			"?Concert vCard:Street ?evnt_street."+
+			"?Concert vCard:Locality ?evnt_locality."+
+			"?Concert vCard:Pcode ?evnt_pcode."+
+			"?Concert vCard:Country ?evnt_country."+
+	   		"?Concert geo:lat ?evnt_lat. "+
+			"?Concert geo:long ?evnt_long. "+
+
 			
 		//	"?evnt_venue vCard:ADRTYPES ?evnt_venue_adr."+
 		//	"?evnt_venue_adr vCard:Street ?evnt_street."+
@@ -187,14 +192,18 @@ public class JenaFrame {
 			"?Concert dc:date ?evnt_date. "+
 			"?Concert m:performerName ?name. "+
 			"?Concert vCard:URL ?evnt_url. "+
-			"?evnt_venue rdf:type m:Venue. "+
-			"?Concert m:event_description ?evnt_venue. "+
-			"?evnt_venue dc:title ?evnt_venue_title. "+
-	//		"?evnt_Point rdf:type geo:Point. "+
-    //		"?evnt_venue geo:Point ?evnt_Point. "+
-	//		"?evnt_Point geo:lat ?lat. " +
-	//		"?evnt_Point geo:long ?long. "+
+			"?Concert dc:identifier ?evnt_venue. "+
+			"?Concert vCard:Street ?evnt_street."+
+			"?Concert vCard:Locality ?evnt_locality."+
+			"?Concert vCard:Pcode ?evnt_pcode."+
+			"?Concert vCard:Country ?evnt_country."+
+    		"?Concert geo:lat ?evnt_lat. "+
+			"?Concert geo:long ?evnt_long. "+
 			
+			
+		//	"?evnt_venue rdf:type m:Venue. "+
+		//	"?Concert m:event_description ?evnt_venue. "+
+		//	"?evnt_venue dc:title ?evnt_venue_title. "+			
 	//  	"?evnt_venue_adr rdf:type vCard:ADRTYPES."+
 	//		"?evnt_venue vCard:ADRTYPES ?evnt_venue_adr."+
 	//		"?evnt_venue_adr vCard:Street ?evnt_street."+
