@@ -52,15 +52,40 @@ public class JenaFrame {
 	  }
 
 	 
-	 //load the dbpedia ontology into the model
-	 model.read(inputStream, null);
-	 
-     model.read("http://www.mindswap.org/~glapizco/technical.owl");
-	 
 	 //Set Prefixes
 	 model.setNsPrefix("dbpedia2","http://dbpedia.org/property/");
 	 model.setNsPrefix("mindswap","http://www.mindswap.org/~glapizco/technical.owl#");
-	 model.setNsPrefix("dbpedia-owl","http://dbpedia.org/ontology/");	
+	 model.setNsPrefix("dbpedia-owl","http://dbpedia.org/ontology/");
+	 model.setNsPrefix("m","http://www.kanzaki.com/ns/music#");
+	 
+	 //Load the dbpedia ontology
+	 model.read(inputStream, null);
+	 //Load the image ontology
+     model.read("http://www.mindswap.org/~glapizco/technical.owl");
+     //Load the music ontology
+     model.read("http://www.kanzaki.com/ns/music.rdf");
+     //Load the foaf
+     model.read("http://xmlns.com/foaf/0.1/index.rdf");
+     //Load the vCard
+     model.read("http://www.w3.org/2001/vcard-rdf/3.0");
+     //Load the geo ontology
+     model.read("http://www.w3.org/2003/01/geo/wgs84_pos.rdf");
+     
+
+	 
+	 /*
+	 
+	   xmlns:j.0="http://www.mindswap.org/~glapizco/simpleABC.owl#"
+		    xmlns:j.1="http://dbpedia.org/ontology/"
+		    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+		    xmlns:j.2="http://xmlns.com/wordnet/1.6/"
+		    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+		    xmlns:owl="http://www.w3.org/2002/07/owl#"
+		    xmlns:m="http://www.kanzaki.com/ns/music#"
+		    xmlns:j.3="http://dbpedia.org/property/"
+		    xmlns:j.4="http://www.megginson.com/exp/ns/airports#"
+		    xmlns:j.5="http://www.mindswap.org/~glapizco/technical.owl#"
+      */
 	 
 	//Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
 	//reasoner.bindSchema(model);
@@ -117,8 +142,7 @@ public class JenaFrame {
 */	
 	
 	public static String query_model(String keyword) {		
-		String queryString=
-			
+		String queryString=			
 			"PREFIX owl: <http://www.w3.org/2002/07/owl#> "+
             "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "+
             "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "+
@@ -132,36 +156,46 @@ public class JenaFrame {
             "PREFIX m: <http://www.kanzaki.com/ns/music#> "+
             "PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>" +
             "PREFIX vCard: <http://www.w3.org/2001/vcard-rdf/3.0#>" +
-			///*
+
             "CONSTRUCT { "+
 			"?s rdf:type foaf:Agent; "+
 			"foaf:name ?name; "+
 			"dbpedia2:abstract ?abstract; "+
-			"dbpedia2:currentMembers ?currentMembers; "+
 			"dbpedia2:yearsActive ?yearsActive; "+
 			"dbpedia2:genre ?genre; "+
 			"dbpedia-owl:thumbnail ?thumbnail; "+
-			"dbpedia2:url ?url; " +
-			"foaf:img ?img;"+
-			"mindswap:Video ?Video;"+
-			"dc:title ?video_tile;"+
-			"dc:identifier ?video_id;"+
-			"mindswap:hasDuration ?video_duration."+
+			"dbpedia2:currentMembers ?currentMembers. "+
+			"?currentMembers foaf:name ?member_name. "+
+			"?s dbpedia2:url ?url. " +
+			//Photos
+			"?s foaf:img ?img."+
+			//Videos
+			"?s mindswap:Video ?Video."+
+			"?Video dc:title ?video_tile."+
+			"?Video dc:identifier ?video_id."+
+			"?Video mindswap:hasDuration ?video_duration."+
+		/*	//Events
+			"?s m:Concert ?Concert."+
+			"?Concert dc:title ?evnt_tile."+
+			"?Concert dc:date ?evnt_date."+
+			"?Concert vCard:URL ?evnt_url."+
+		*/	
 			"} "+
 			"WHERE {" +
-			//"GRAPH ?g{ "+
 			"?s rdf:type foaf:Agent. "+
 			"?s foaf:name ?name. "+
 			"?s dbpedia2:abstract ?abstract. "+
-			"OPTIONAL { ?s dbpedia2:currentMembers ?currentMembers }. "+
+			"OPTIONAL { ?s dbpedia2:currentMembers ?currentMembers." +
+			"?currentMembers foaf:name ?member_name. }. "+
 			"?s  dbpedia-owl:thumbnail ?thumbnail. "+
 			"?s dbpedia2:yearsActive ?yearsActive. "+
 			"?s  dbpedia2:genre ?genre. "+
 			"?s  dbpedia2:url ?url. "+
 			//Images
-			"?Image foaf:img ?img. "+
+			"?Image rdf:type foaf:Image. "+
 			"?Image  foaf:depicts ?m. "+
 			"?m foaf:name ?name. "+
+			"?Image foaf:img ?img. "+
 			//Videos
 			"?Video rdf:type mindswap:Video. "+
 			"?Video dc:title ?video_title. "+
@@ -169,20 +203,16 @@ public class JenaFrame {
 			"?Video mindswap:hasDurationSeconds ?video_duration. "+
 			"?Video mindswap:depicts ?x. "+
 			"?x foaf:name ?name. "+
+		/*	//Events
+			"?Concert rdf:type m:Concert. "+
+			"?Concert dc:date ?evnt_date. "+
+			"?Concert vCard:URL ?evnt_url. "+
+			"?Concert m:Artist ?evnt_artist. "+
+			"?evnt_artist foaf:name ?name."+
+		*/	
 			"FILTER (regex(?name, \""+keyword+"\")). "+
 			"}";
-            //*/
-            
-            /*
-            "SELECT ?s  ?p ?o "+
-            "WHERE { "+
-            "?s a dbpedia-owl:Artist."+
-            "?s foaf:name ?artistName. "+
-            "?s ?p ?o. "+
-            "FILTER (regex(?artistName, \"Moby\")) "+
-            "}";
-		    */
-		
+            		
 		Query query = QueryFactory.create(queryString);
 		//Query local model
 		QueryExecution local_exec= QueryExecutionFactory.create(query,model);
@@ -192,8 +222,6 @@ public class JenaFrame {
 			 ByteArrayOutputStream rdf_stream= new ByteArrayOutputStream();
 			 qmodel.write(rdf_stream);
 			 return rdf_stream.toString();	    
-            //String xml = ResultSetFormatter.asXMLString(results);
-            //return xml;
             } 
           finally 
             {

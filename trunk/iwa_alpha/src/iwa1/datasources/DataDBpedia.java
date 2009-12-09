@@ -36,21 +36,24 @@ public class DataDBpedia {
 				"?s rdf:type foaf:Agent; "+
 				"foaf:name ?name; "+
 				"dbpedia2:abstract ?abstract; "+
-				"dbpedia2:currentMembers ?currentMembers; "+
+
 				"dbpedia2:yearsActive ?yearsActive; "+
 				"dbpedia2:genre ?genre; "+
 				"dbpedia-owl:thumbnail ?thumbnail; "+
-				"dbpedia2:url ?url.} "+
+				"dbpedia2:url ?url; "+
+				"dbpedia2:currentMembers ?currentMembers. "+
+				"?currentMembers foaf:name ?member_name.}"+
 				"WHERE {" +
 				"GRAPH ?g{ "+
 				"?s a owl:Thing. "+
 				"?s foaf:name ?name. "+
 				"?s dbpedia2:abstract ?abstract. "+
 				"?s  dbpedia-owl:thumbnail ?thumbnail. "+
-				"OPTIONAL { ?s dbpedia2:currentMembers ?currentMembers }. "+
 				"?s dbpedia2:yearsActive ?yearsActive. "+
 				"?s  dbpedia2:genre ?genre. "+
 				"?s  dbpedia2:url ?url. "+
+				"OPTIONAL { ?s dbpedia2:currentMembers ?currentMembers." +
+				"?currentMembers foaf:name ?member_name. }. "+
 				"FILTER (regex(?name, \""+keyword+"\")). "+
 				"FILTER langMatches( lang(?abstract), 'en'). "+
 				"}.}";
